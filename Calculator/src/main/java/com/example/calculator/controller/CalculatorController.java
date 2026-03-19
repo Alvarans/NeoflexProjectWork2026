@@ -20,10 +20,10 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/calculator")
+//@RequestMapping("/calculator")
 @Validated
 @Slf4j
-@Tag(name = "Credit controller", description = "Контроллер для вычисления кредитных предложений")
+//@Tag(name = "Credit controller", description = "Контроллер для вычисления кредитных предложений")
 public class CalculatorController implements CalculatorApi {
     //Service for api logic
     private final CalculatorService calculatorService;
@@ -37,7 +37,7 @@ public class CalculatorController implements CalculatorApi {
      * @return list of credit offers. If information about client can't pass prescore - return empty list
      */
     @Override
-    @PostMapping("/offers")
+    //@PostMapping("/offers")
     public ResponseEntity<List<LoanOfferDto>> creditOffers(@Validated @RequestBody LoanStatementRequestDto loanStatementRequestDto) {
         scoringService.prescore(loanStatementRequestDto);
         return ResponseEntity.ok(calculatorService.generateOffers(loanStatementRequestDto));
@@ -50,7 +50,7 @@ public class CalculatorController implements CalculatorApi {
      * @return filled credit offer with monthly payment schedule. If request information can't pass score - return empty credit offer
      */
     @Override
-    @PostMapping("/calc")
+    //@PostMapping("/calc")
     public ResponseEntity<CreditDto> creditCalculation(@Validated @RequestBody ScoringDataDto scoringDataDto) {
         BigDecimal scoreRate;
         try {
