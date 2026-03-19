@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.0</version>
+        <version>3.3.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
@@ -153,14 +153,15 @@
                             <configOptions>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useSpringBoot3>true</useSpringBoot3>
+                                <useBeanValidation>true</useBeanValidation>
+                                <useJakartaBeanValidation>true</useJakartaBeanValidation>
+                                <performBeanValidation>true</performBeanValidation>
                                 <!-- Добавляем аннотации Lombok для всех видов конструкторов -->
                                 <additionalModelTypeAnnotations>
-                                    @lombok.Data
                                     @lombok.NoArgsConstructor
                                     @lombok.AllArgsConstructor
                                     @lombok.Builder
                                 </additionalModelTypeAnnotations>
-
                                 <!-- Эта опция заставит генератор создать конструктор для обязательных (required) полей -->
                                 <generatedConstructorWithRequiredArgs>true</generatedConstructorWithRequiredArgs>
                                 <useTags>true</useTags>
