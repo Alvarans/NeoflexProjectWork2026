@@ -1,0 +1,381 @@
+openapi: 3.0.3
+info:
+  title: Credit Calculator API
+  version: 1.0.0
+  description: Микросервис для расчета кредитных предложений с разными условиями и параметров кредита.
+
+paths:
+  /calculator/offers:
+    post:
+      summary: Прескоринг и расчет 4 вариантов предложений
+      operationId: creditOffers
+      tags:
+        - Calculator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanStatementRequestDto'
+      responses:
+        '200':
+          description: Список из 4-х LoanOfferDto (от худшего к лучшему)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LoanOfferDto'
+
+  /calculator/calc:
+    post:
+      summary: Полный скоринг и расчет кредита для клиента
+      description: Эндпоинт для расчёта кредита. Данные проходят валидацию и скоринг.
+      operationId: creditCalculation
+      tags:
+        - Calculator
+      requestBody:
+        description: Информация о клиенте и запрашиваемом кредите
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScoringDataDto'
+      responses:
+        '200':
+          description: Полный расчет кредита с графиком платежей
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditDto'
+        '400':
+          description: Ошибка валидации или провал скоринга
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditDto'
+              example: {}
+
+components:
+  schemas:
+    LoanStatementRequestDto:
+      type: object
+      required:
+      - amount
+      - term
+      - firstName
+      - lastName
+      - email
+      - birthdate
+      - passportSeries
+      - passportNumber
+      properties:
+        amount:
+          description: Сумма кредита
+          type: number
+          format: decimal
+          minimum: 20000
+          example: 30000.00
+        term:
+          description: Срок кредита
+          type: integer
+          minimum: 6
+          example: 48
+        firstName:
+          description: Имя клиента
+          type: string
+          minLength: 2
+          maxLength: 30
+          example: Boris
+        lastName:
+          description: Фамилия клиента
+          type: string
+          minLength: 2
+          maxLength: 30
+          example: Britva
+        middleName:
+          description: Отчество клиента
+          type: string
+          minLength: 2
+          maxLength: 30
+          example: Urievich
+        email:
+          description: Электронная почта клиента
+          type: string
+          pattern: "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$"
+          example: snitch@mail.ru
+        birthdate:
+          description: День рождения клиента. Должно быть не менее 18 лет назад
+          type: string
+          format: date
+          example: 2001-01-01
+        passportSeries:
+          description: Серия паспорта клиента
+          type: string
+          pattern: '^\d{4}$'
+          example: 1234
+        passportNumber:
+          description: Номер паспорта клиента
+          type: string
+          pattern: '^\d{6}$'
+          example: 123456
+
+    LoanOfferDto:
+      type: object
+      properties:
+        statementId:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-42d3-a456-556642440000
+        requestedAmount:
+          description: Сумма запрашиваемого кредита
+          type: number
+          format: decimal
+          example: 300000
+        totalAmount:
+          description: Сумма, которую банк готов предоставить
+          type: number
+          format: decimal
+          example: 300000
+        term:
+          description: Срок кредита
+          type: integer
+          example: 46
+        monthlyPayment:
+          description: Сумма ежемесячного платежа по кредиту
+          type: number
+          format: decimal
+          example: 4000.00
+        rate:
+          description: Ставка по кредиту
+          type: number
+          format: decimal
+          example: 16.00
+        isInsuranceEnabled:
+          description: Взял ли клиент страхование или нет
+          type: boolean
+          example: true
+        isSalaryClient:
+          description: Является ли клиент зарплатным клиентом банка
+          type: boolean
+          example: false
+
+    ScoringDataDto:
+      type: object
+      required:
+      - amount
+      - term
+      - firstName
+      - lastName
+      - gender
+      - birthdate
+      - passportSeries
+      - passportNumber
+      - passportIssueDate
+      - passportIssueBranch
+      - maritalStatus
+      - dependentAmount
+      - employment
+      - accountNumber
+      properties:
+        amount:
+          description: Сумма кредита
+          type: number
+          format: decimal
+          example: 300000.00
+        term:
+          description: Срок кредита
+          type: integer
+          example: 48
+        firstName:
+          description: Имя клиента
+          type: string
+          example: Alexandr
+        lastName:
+          description: Фамилия клиента
+          type: string
+          example: Pushkin
+        middleName:
+          description: Отчество клиента
+          type: string
+          example: Sergeevich
+        gender:
+          $ref: '#/components/schemas/Genders'
+        birthdate:
+          description: День рождения клиента
+          type: string
+          format: date
+          example: 2000-06-06
+        passportSeries:
+          description: Серия паспорта клиента
+          type: string
+          pattern: '^\d{4}$'
+          example: 1111
+        passportNumber:
+          description: Номер паспорта клиента
+          type: string
+          pattern: '^\d{6}$'
+          example: 222222
+        passportIssueDate:
+          description: Дата выдачи паспорта
+          type: string
+          format: date
+          example: 2014-01-01
+        passportIssueBranch:
+          description: Место выдачи паспорта
+          type: string
+          example: MVD
+        maritalStatus:
+          $ref: '#/components/schemas/MaritalStatus'
+        dependentAmount:
+          description: Число иждивенцев
+          type: integer
+          example: 3
+        employment:
+          $ref: '#/components/schemas/EmploymentDto'
+        accountNumber:
+          description: Номер счёта
+          type: string
+          example: 15235434
+        isInsuranceEnabled:
+          description: Взял ли клиент страховку
+          type: boolean
+          example: true
+        isSalaryClient:
+          description: Является ли клиент зарплатным для банка
+          type: boolean
+          example: false
+
+    EmploymentDto:
+      type: object
+      properties:
+        employmentStatus:
+          $ref: '#/components/schemas/EmploymentStatus'
+        employerINN:
+          description: ИНН клиента
+          type: string
+          example: 1234567890
+        salary:
+          description: Заработная плата клиента
+          type: number
+          format: decimal
+          example: 30000.00
+        position:
+          $ref: '#/components/schemas/Positions'
+        workExperienceTotal:
+          description: Общий опыт работы
+          type: integer
+          example: 20
+        workExperienceCurrent:
+          description: Опыт работы на последней работе
+          type: integer
+          example: 6
+
+    CreditDto:
+      type: object
+      properties:
+        amount:
+          description: Сумма кредита
+          type: number
+          format: decimal
+          example: 300000.00
+        term:
+          description: Срок кредитования
+          type: integer
+          example: 24
+        monthlyPayment:
+          description: Сумма ежемесячной платы
+          type: number
+          format: decimal
+          example: 3000.00
+        rate:
+          description: Ставка по кредиту
+          type: number
+          format: decimal
+          example: 16.00
+        psk:
+          description: Полная сумма оплаты
+          type: number
+          format: decimal
+          example: 310000.00
+        isInsuranceEnabled:
+          description: Взял ли клиент страховку
+          type: boolean
+          example: true
+        isSalaryClient:
+          description: Является ли клиент зарплатным для банка
+          type: boolean
+          example: false
+        paymentSchedule:
+          description: График платежей
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentScheduleElementDto'
+
+    PaymentScheduleElementDto:
+      type: object
+      properties:
+        number:
+          description: Номер платежа
+          type: integer
+          example: 1
+        date:
+          description: Дата платежа
+          type: string
+          format: date
+          example: 2001-01-01
+        totalPayment:
+          description: Полная сумма платежа
+          type: number
+          format: decimal
+          example: 30000.00
+        interestPayment:
+          description: Оплата процентного платежа
+          type: number
+          format: decimal
+          example: 3000.00
+        debtPayment:
+          description: Оплата платежа по долгу
+          type: number
+          format: decimal
+          example: 27000.00
+        remainingDebt:
+          description: Сумма долга, оставшаяся к оплате
+          type: number
+          format: decimal
+          example: 150000.00
+
+    EmploymentStatus:
+      description: Статус занятости клиента
+      type: string
+      enum:
+      - UNEMPLOYED
+      - SELF_EMPLOYED
+      - EMPLOYED
+      - BUSINESS_OWNER
+
+    Genders:
+      description: Пол клиента
+      type: string
+      enum:
+      - MALE
+      - FEMALE
+      - NON_BINARY
+
+    MaritalStatus:
+      description: Семейное положение клиента
+      type: string
+      enum:
+      - MARRIED
+      - DIVORCED
+      - SINGLE
+      - WIDOW_WIDOWER
+
+    Positions:
+      description: Должность клиента
+      type: string
+      enum:
+      - MID_MANAGER
+      - TOP_MANAGER
+      - WORKER
+      - OWNER
