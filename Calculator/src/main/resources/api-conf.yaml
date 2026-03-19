@@ -60,7 +60,15 @@ components:
   schemas:
     LoanStatementRequestDto:
       type: object
-      required: [amount, term, firstName, lastName, email, birthdate, passportSeries, passportNumber]
+      required:
+      - amount
+      - term
+      - firstName
+      - lastName
+      - email
+      - birthdate
+      - passportSeries
+      - passportNumber
       properties:
         amount:
           description: Сумма кредита
@@ -154,7 +162,21 @@ components:
 
     ScoringDataDto:
       type: object
-      required: [amount, term, firstName, lastName, gender, birthdate, passportSeries, passportNumber, passportIssueDate, passportIssueBranch, maritalStatus, dependentAmount, employment, accountNumber]
+      required:
+      - amount
+      - term
+      - firstName
+      - lastName
+      - gender
+      - birthdate
+      - passportSeries
+      - passportNumber
+      - passportIssueDate
+      - passportIssueBranch
+      - maritalStatus
+      - dependentAmount
+      - employment
+      - accountNumber
       properties:
         amount:
           description: Сумма кредита
@@ -326,19 +348,34 @@ components:
     EmploymentStatus:
       description: Статус занятости клиента
       type: string
-      enum: [UNEMPLOYED, SELF_EMPLOYED, EMPLOYED, BUSINESS_OWNER]
+      enum:
+      - UNEMPLOYED
+      - SELF_EMPLOYED
+      - EMPLOYED
+      - BUSINESS_OWNER
 
     Genders:
       description: Пол клиента
       type: string
-      enum: [MALE, FEMALE, NON_BINARY]
+      enum:
+      - MALE
+      - FEMALE
+      - NON_BINARY
 
     MaritalStatus:
       description: Семейное положение клиента
       type: string
-      enum: [MARRIED, DIVORCED, SINGLE, WIDOW_WIDOWER]
+      enum:
+      - MARRIED
+      - DIVORCED
+      - SINGLE
+      - WIDOW_WIDOWER
 
     Positions:
       description: Должность клиента
       type: string
-      enum: [MID_MANAGER, TOP_MANAGER, WORKER, OWNER]
+      enum:
+      - MID_MANAGER
+      - TOP_MANAGER
+      - WORKER
+      - OWNER
