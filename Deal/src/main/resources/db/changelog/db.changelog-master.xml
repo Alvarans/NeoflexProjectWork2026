@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://liquibase.org"
+        xmlns:xsi="http://w3.org"
+        xsi:schemaLocation="http://liquibase.org
+        http://liquibase.org/dbchangelog-latest.xsd">
+
+    <!-- Подключаем файлы по отдельности или целой папкой -->
+    <include file="db/changelog/changeset/01-create-credit-table.xml"/>
+    <include file="db/changelog/changeset/02-create-client-table.xml"/>
+    <include file="db/changelog/changeset/03-create-statement-table.xml"/>
+
+</databaseChangeLog>
