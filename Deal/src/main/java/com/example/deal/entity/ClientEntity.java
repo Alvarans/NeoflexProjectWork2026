@@ -21,7 +21,7 @@ import java.util.UUID;
 public class ClientEntity {
     @Id
     @Column(name = "client_id")
-    private UUID сlientId;
+    private UUID clientId;
 
     @Column(name = "last_name")
     private String lastName;
@@ -51,10 +51,12 @@ public class ClientEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "passport_id", columnDefinition = "jsonb")
-    private Passport passport; // Желтый блок
+    private Passport passport;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "employment_id", columnDefinition = "jsonb")
-    private EmploymentDto employment; // Желтый блок
+    private EmploymentDto employment;
 
+    @Column(name = "account_number")
+    private String accountNumber;
 }

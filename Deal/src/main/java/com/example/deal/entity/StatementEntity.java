@@ -4,6 +4,8 @@ import com.example.deal.dto.ApplicationStatus;
 import com.example.deal.dto.LoanOfferDto;
 import com.example.deal.dto.StatusHistoryRecord;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -13,6 +15,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "statement")
 public class StatementEntity {
     @Id
