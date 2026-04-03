@@ -1,9 +1,6 @@
 package com.example.deal.service;
 
-import com.example.deal.dto.Genders;
-import com.example.deal.dto.LoanStatementRequestDto;
-import com.example.deal.dto.MaritalStatus;
-import com.example.deal.dto.Passport;
+import com.example.deal.dto.*;
 import com.example.deal.entity.ClientEntity;
 import com.example.deal.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,5 +42,17 @@ public class ClientService {
         clientEntity.setPassport(clientPassport);
         //employment
         return clientEntity;
+    }
+
+    void updateClientAfterCreditCalculation(UUID clientId, FinishRegistrationRequestDto finishRegistrationRequestDto) {
+        ClientEntity clientEntity = getClientEntityByClientId(clientId);
+        clientEntity.setGender(finishRegistrationRequestDto.getGender());
+        clientEntity.setMaritalStatus(finishRegistrationRequestDto.getMaritalStatus());
+        clientEntity.setDependentAmount(finishRegistrationRequestDto.getDependentAmount());
+        clientEntity.getPassport().setIssueDate(finishRegistrationRequestDto.getPassportIssueDate());
+        clientEntity.getPassport().setIssueBranch(finishRegistrationRequestDto.getPassportIssueBrach());
+        clientEntity.setEmployment(finishRegistrationRequestDto.getEmployment());
+        clientEntity.setAccountNumber(finishRegistrationRequestDto.getAccountNumber());
+        clientRepository.save(clientEntity);
     }
 }

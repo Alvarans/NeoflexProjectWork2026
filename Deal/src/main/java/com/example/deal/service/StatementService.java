@@ -1,6 +1,7 @@
 package com.example.deal.service;
 
 import com.example.deal.dto.ApplicationStatus;
+import com.example.deal.dto.LoanOfferDto;
 import com.example.deal.entity.StatementEntity;
 import com.example.deal.repository.StatementRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,5 +23,20 @@ public class StatementService {
         statementEntity.setCreationDate(LocalDateTime.now());
         statementRepository.save(statementEntity);
         return statementEntity.getStatementId();
+    }
+
+    void updateStatement(StatementEntity statementEntity){
+        statementRepository.save(statementEntity);
+    }
+
+    StatementEntity getStatement(UUID statementId){
+        return statementRepository.findByStatementId(statementId);
+    }
+
+    void updateStatementWithChoosedOffer(LoanOfferDto loanOfferDto){
+        StatementEntity statementEntity = getStatement(loanOfferDto.getStatementId());
+        statementEntity.setAppliedOffer(loanOfferDto);
+        statementEntity.updateStatus(ApplicationStatus.APPROVED);
+        updateStatement(statementEntity);
     }
 }

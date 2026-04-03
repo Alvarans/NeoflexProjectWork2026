@@ -1,8 +1,9 @@
 package com.example.deal.entity;
 
 import com.example.deal.dto.ApplicationStatus;
+import com.example.deal.dto.ChangeType;
 import com.example.deal.dto.LoanOfferDto;
-import com.example.deal.dto.StatusHistoryRecord;
+import com.example.deal.dto.StatementStatusHistoryDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,5 +51,10 @@ public class StatementEntity {
 
     @JdbcTypeCode(SqlTypes.JSON) // Магическая аннотация для JSONB
     @Column(name = "status_history", columnDefinition = "jsonb")
-    private List<StatusHistoryRecord> statusHistory;
+    private List<StatementStatusHistoryDto> statusHistory;
+
+    public void updateStatus(ApplicationStatus applicationStatus) {
+        this.statusHistory.add(new StatementStatusHistoryDto(this.applicationStatus, OffsetDateTime.now(), ChangeType.MANUAL));
+        this.applicationStatus = applicationStatus;
+    }
 }

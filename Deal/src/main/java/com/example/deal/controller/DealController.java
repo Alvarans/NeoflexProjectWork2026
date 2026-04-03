@@ -23,6 +23,7 @@ public class DealController implements DealApi {
     private final DealService dealService;
     @Override
     public ResponseEntity<Void> calculateCredit(UUID statementId, FinishRegistrationRequestDto finishRegistrationRequestDto) {
+        dealService.calculateCredit(statementId, finishRegistrationRequestDto);
         return ResponseEntity.ok().build();
     }
 
@@ -33,6 +34,7 @@ public class DealController implements DealApi {
 
     @Override
     public ResponseEntity<Void> selectOffer(LoanOfferDto loanOfferDto) {
+        dealService.selectOffer(loanOfferDto);
         return ResponseEntity.ok().build();
     }
 }

@@ -335,7 +335,7 @@ components:
           format: date
           example: 2014-01-01
 
-    StatusHistoryRecord:
+    StatementStatusHistoryDto:
       type: object
       properties:
         status:
@@ -345,6 +345,80 @@ components:
           format: date-time
         changeType:
           $ref: '#/components/schemas/ChangeType'
+
+    CreditDto:
+      type: object
+      properties:
+        amount:
+          description: Сумма кредита
+          type: number
+          format: decimal
+          example: 300000.00
+        term:
+          description: Срок кредитования
+          type: integer
+          example: 24
+        monthlyPayment:
+          description: Сумма ежемесячной платы
+          type: number
+          format: decimal
+          example: 3000.00
+        rate:
+          description: Ставка по кредиту
+          type: number
+          format: decimal
+          example: 16.00
+        psk:
+          description: Полная сумма оплаты
+          type: number
+          format: decimal
+          example: 310000.00
+        isInsuranceEnabled:
+          description: Взял ли клиент страховку
+          type: boolean
+          example: true
+        isSalaryClient:
+          description: Является ли клиент зарплатным для банка
+          type: boolean
+          example: false
+        paymentSchedule:
+          description: График платежей
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentScheduleElementDto'
+
+    PaymentScheduleElementDto:
+      type: object
+      properties:
+        number:
+          description: Номер платежа
+          type: integer
+          example: 1
+        date:
+          description: Дата платежа
+          type: string
+          format: date
+          example: 2001-01-01
+        totalPayment:
+          description: Полная сумма платежа
+          type: number
+          format: decimal
+          example: 30000.00
+        interestPayment:
+          description: Оплата процентного платежа
+          type: number
+          format: decimal
+          example: 3000.00
+        debtPayment:
+          description: Оплата платежа по долгу
+          type: number
+          format: decimal
+          example: 27000.00
+        remainingDebt:
+          description: Сумма долга, оставшаяся к оплате
+          type: number
+          format: decimal
+          example: 150000.00
 
     Genders:
       description: Пол клиента

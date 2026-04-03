@@ -1,12 +1,11 @@
 package com.example.deal.repository;
 
-import com.example.deal.entity.StatementEntity;
+import com.example.deal.entity.CreditEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public interface StatementRepository extends JpaRepository<StatementEntity, UUID> {
-    StatementEntity findByStatementId(UUID statementId);
+public interface CreditRepository extends JpaRepository<CreditEntity, UUID> {
 }
