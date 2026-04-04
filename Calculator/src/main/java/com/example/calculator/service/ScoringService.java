@@ -1,9 +1,9 @@
 package com.example.calculator.service;
 
+import com.example.calculator.dto.EmploymentStatus;
 import com.example.calculator.dto.LoanStatementRequestDto;
 import com.example.calculator.dto.ScoringDataDto;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -11,11 +11,12 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.Period;
 
-import static com.example.calculator.enums.EmploymentStatusEnum.*;
-import static com.example.calculator.enums.GendersEnum.FEMALE;
-import static com.example.calculator.enums.GendersEnum.MALE;
-import static com.example.calculator.enums.MaritalStatusEnum.*;
-import static com.example.calculator.enums.PositionsEnum.*;
+import static com.example.calculator.dto.EmploymentStatus.BUSINESS_OWNER;
+import static com.example.calculator.dto.EmploymentStatus.SELF_EMPLOYED;
+import static com.example.calculator.dto.Genders.FEMALE;
+import static com.example.calculator.dto.Genders.MALE;
+import static com.example.calculator.dto.MaritalStatus.*;
+import static com.example.calculator.dto.Positions.*;
 
 @Service
 @Slf4j
@@ -78,25 +79,25 @@ public class ScoringService {
         if (scoringDataDto.getEmployment().getWorkExperienceCurrent() < 3)
             throw new IllegalArgumentException("You need more experience on your current work");
         //Проверка статуса занятости клиента. Если клиент безработный - отказать в кредите. Иначе - увеличить добавочную ставку
-        if (scoringDataDto.getEmployment().getEmploymentStatus().equals(UNEMPLOYED)) {
+        if (scoringDataDto.getEmployment().getEmploymentStatus().equals(EmploymentStatus.UNEMPLOYED)) {
             throw new IllegalArgumentException("You can't take a credit with status \"unemployed\"");
-        } else if (scoringDataDto.getEmployment().getEmploymentStatus().equals(SELF_EMPLOYEE)) {
+        } else if (scoringDataDto.getEmployment().getEmploymentStatus().equals(SELF_EMPLOYED)) {
             rate = rate.add(new BigDecimal(1));
             log.info("Rate added because of status +1. Current rate - " + rate);
-        } else if (scoringDataDto.getEmployment().getEmploymentStatus().equals(BUSINESSOWNER)) {
+        } else if (scoringDataDto.getEmployment().getEmploymentStatus().equals(BUSINESS_OWNER)) {
             rate = rate.add(new BigDecimal(2));
             log.info("Rate added because of status +2. Current rate - " + rate);
         }
         //Проверка должности клиента. В зависимости от неё уменьшается добавочная ставка по кредиту
-        if (scoringDataDto.getEmployment().getPosition().equals(SENIORSTAFF)) {
+        if (scoringDataDto.getEmployment().getPosition().equals(OWNER)) {
             rate = rate.subtract(new BigDecimal(1));
             log.info("Rate subtracted because of position -1. Current rate - " + rate);
         }
-        else if (scoringDataDto.getEmployment().getPosition().equals(MIDDLEMANAGER)) {
+        else if (scoringDataDto.getEmployment().getPosition().equals(MID_MANAGER)) {
             rate = rate.subtract(new BigDecimal(2));
             log.info("Rate subtracted because of position -2. Current rate - " + rate);
         }
-        else if (scoringDataDto.getEmployment().getPosition().equals(TOPMANAGER)) {
+        else if (scoringDataDto.getEmployment().getPosition().equals(TOP_MANAGER)) {
             rate = rate.subtract(new BigDecimal(3));
             log.info("Rate subtracted because of position -3. Current rate - " + rate);
         }
@@ -105,7 +106,7 @@ public class ScoringService {
             rate = rate.subtract(new BigDecimal(3));
             log.info("Rate subtracted because of marinal status -3. Current rate - " + rate);
         }
-        else if (scoringDataDto.getMaritalStatus().equals(WIDOWED)) {
+        else if (scoringDataDto.getMaritalStatus().equals(WIDOW_WIDOWER)) {
             rate = rate.subtract(new BigDecimal(1));
             log.info("Rate subtracted because of marinal status -1. Current rate - " + rate);
         }

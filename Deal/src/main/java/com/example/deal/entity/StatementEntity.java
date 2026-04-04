@@ -13,6 +13,7 @@ import org.hibernate.type.SqlTypes;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,6 +23,7 @@ import java.util.UUID;
 @Table(name = "statement")
 public class StatementEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "statement_id")
     private UUID statementId;
 
@@ -40,6 +42,7 @@ public class StatementEntity {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "applied_offer", columnDefinition = "jsonb")
     private LoanOfferDto appliedOffer;
 
@@ -49,9 +52,9 @@ public class StatementEntity {
     @Column(name = "ses_code")
     private String sesCode;
 
-    @JdbcTypeCode(SqlTypes.JSON) // Магическая аннотация для JSONB
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "status_history", columnDefinition = "jsonb")
-    private List<StatementStatusHistoryDto> statusHistory;
+    private List<StatementStatusHistoryDto> statusHistory = new ArrayList<>();;
 
     public void updateStatus(ApplicationStatus applicationStatus) {
         this.statusHistory.add(new StatementStatusHistoryDto(this.applicationStatus, OffsetDateTime.now(), ChangeType.MANUAL));

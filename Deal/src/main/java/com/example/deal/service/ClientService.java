@@ -4,46 +4,58 @@ import com.example.deal.dto.*;
 import com.example.deal.entity.ClientEntity;
 import com.example.deal.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+/**
+ * Сервис, обслуживающий взаимодействие с клиентом
+ */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ClientService {
     private final ClientRepository clientRepository;
 
-    public UUID createClient(LoanStatementRequestDto loanStatementRequestDto) {
-        ClientEntity clientEntity = createClientEntityByLoanStatementRequest(loanStatementRequestDto);
-        clientRepository.save(clientEntity);
-        return  clientEntity.getClientId();
-    }
-
-    //Package-private access
-    ClientEntity getClientEntityByClientId(UUID clientId) {
-        return clientRepository.getReferenceById(clientId);
-    }
-
-    private ClientEntity createClientEntityByLoanStatementRequest(LoanStatementRequestDto loanStatementRequestDto) {
+    /**
+     * Формирование записи нового клиента
+     * @param loanStatementRequestDto Информация для запроса по кредитным предложениям.
+     *                                Содержит первичную информацию по клиенту
+     * @return ID созданного клиента для дальнейшего взаимодействия
+     */
+    UUID createClient(LoanStatementRequestDto loanStatementRequestDto) {
         ClientEntity clientEntity = new ClientEntity();
         clientEntity.setLastName(loanStatementRequestDto.getLastName());
         clientEntity.setFirstName(loanStatementRequestDto.getFirstName());
         clientEntity.setMiddleName(loanStatementRequestDto.getMiddleName());
         clientEntity.setBirthDate(loanStatementRequestDto.getBirthdate());
         clientEntity.setEmail(loanStatementRequestDto.getEmail());
-        //gender
         clientEntity.setGender(Genders.NON_BINARY);
-        //marital status
         clientEntity.setMaritalStatus(MaritalStatus.SINGLE);
-        //passport
         Passport clientPassport = new Passport();
         clientPassport.setSeries(loanStatementRequestDto.getPassportSeries());
         clientPassport.setNumber(loanStatementRequestDto.getPassportNumber());
         clientEntity.setPassport(clientPassport);
-        //employment
-        return clientEntity;
+        clientRepository.save(clientEntity);
+        log.info("New client saved in database {}", clientEntity);
+        return  clientEntity.getClientId();
     }
 
+    /**
+     * Получение записи о клиенте из базы данных
+     * @param clientId Идентификационный номер клиента
+     * @return Запись о клиенте
+     */
+    ClientEntity getClientEntityByClientId(UUID clientId) {
+        return clientRepository.getReferenceById(clientId);
+    }
+
+    /**
+     * Дополнение недостающей информации о клиенте после принятия кредитного предложения
+     * @param clientId - Идентификационный номер клиента
+     * @param finishRegistrationRequestDto - Информация о клиенте после полной регистрации
+     */
     void updateClientAfterCreditCalculation(UUID clientId, FinishRegistrationRequestDto finishRegistrationRequestDto) {
         ClientEntity clientEntity = getClientEntityByClientId(clientId);
         clientEntity.setGender(finishRegistrationRequestDto.getGender());
@@ -54,5 +66,6 @@ public class ClientService {
         clientEntity.setEmployment(finishRegistrationRequestDto.getEmployment());
         clientEntity.setAccountNumber(finishRegistrationRequestDto.getAccountNumber());
         clientRepository.save(clientEntity);
+        log.info("Updated client info after credit calculation in database {}", clientEntity);
     }
 }

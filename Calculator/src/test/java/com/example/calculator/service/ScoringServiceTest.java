@@ -1,12 +1,6 @@
 package com.example.calculator.service;
 
-import com.example.calculator.dto.EmploymentDto;
-import com.example.calculator.dto.LoanStatementRequestDto;
-import com.example.calculator.dto.ScoringDataDto;
-import com.example.calculator.enums.EmploymentStatusEnum;
-import com.example.calculator.enums.GendersEnum;
-import com.example.calculator.enums.MaritalStatusEnum;
-import com.example.calculator.enums.PositionsEnum;
+import com.example.calculator.dto.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,7 +9,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class ScoringServiceTest {
@@ -44,17 +39,17 @@ class ScoringServiceTest {
     void score() {
         ScoringDataDto scoringDataDto = new ScoringDataDto();
         scoringDataDto.setEmployment(new EmploymentDto());
-        scoringDataDto.getEmployment().setEmploymentStatus(EmploymentStatusEnum.UNEMPLOYED);
+        scoringDataDto.getEmployment().setEmploymentStatus(EmploymentStatus.UNEMPLOYED);
         scoringDataDto.getEmployment().setSalary(new BigDecimal(1000));
         scoringDataDto.setAmount(new BigDecimal(300000));
         scoringDataDto.getEmployment().setWorkExperienceTotal(1);
         scoringDataDto.getEmployment().setWorkExperienceCurrent(1);
-        scoringDataDto.getEmployment().setPosition(PositionsEnum.SENIORSTAFF);
-        scoringDataDto.setMaritalStatus(MaritalStatusEnum.WIDOWED);
-        scoringDataDto.setGender(GendersEnum.MALE);
+        scoringDataDto.getEmployment().setPosition(Positions.OWNER);
+        scoringDataDto.setMaritalStatus(MaritalStatus.WIDOW_WIDOWER);
+        scoringDataDto.setGender(Genders.MALE);
         scoringDataDto.setBirthdate(LocalDate.of(2017,7,30));
         assertThrows(IllegalArgumentException.class, () -> scoringService.score(scoringDataDto));
-        scoringDataDto.getEmployment().setEmploymentStatus(EmploymentStatusEnum.EMPLOYEE);
+        scoringDataDto.getEmployment().setEmploymentStatus(EmploymentStatus.EMPLOYED);
         assertThrows(IllegalArgumentException.class, () -> scoringService.score(scoringDataDto));
         scoringDataDto.getEmployment().setSalary(new BigDecimal(30000));
         assertThrows(IllegalArgumentException.class, () -> scoringService.score(scoringDataDto));
@@ -66,30 +61,30 @@ class ScoringServiceTest {
 
         BigDecimal rate = new BigDecimal(-2);
         assertEquals(rate, scoringService.score(scoringDataDto));
-        scoringDataDto.getEmployment().setEmploymentStatus(EmploymentStatusEnum.SELF_EMPLOYEE);
+        scoringDataDto.getEmployment().setEmploymentStatus(EmploymentStatus.SELF_EMPLOYED);
         assertEquals(rate.add(new BigDecimal(1)),scoringService.score(scoringDataDto));
-        scoringDataDto.getEmployment().setEmploymentStatus(EmploymentStatusEnum.BUSINESSOWNER);
+        scoringDataDto.getEmployment().setEmploymentStatus(EmploymentStatus.BUSINESS_OWNER);
         assertEquals(rate.add(new BigDecimal(2)),scoringService.score(scoringDataDto));
-        scoringDataDto.getEmployment().setEmploymentStatus(EmploymentStatusEnum.EMPLOYEE);
+        scoringDataDto.getEmployment().setEmploymentStatus(EmploymentStatus.EMPLOYED);
 
-        scoringDataDto.getEmployment().setPosition(PositionsEnum.MIDDLEMANAGER);
+        scoringDataDto.getEmployment().setPosition(Positions.MID_MANAGER);
         assertEquals(rate.subtract(new BigDecimal(1)), scoringService.score(scoringDataDto));
-        scoringDataDto.getEmployment().setPosition(PositionsEnum.TOPMANAGER);
+        scoringDataDto.getEmployment().setPosition(Positions.TOP_MANAGER);
         assertEquals(rate.subtract(new BigDecimal(2)), scoringService.score(scoringDataDto));
-        scoringDataDto.getEmployment().setPosition(PositionsEnum.SENIORSTAFF);
+        scoringDataDto.getEmployment().setPosition(Positions.OWNER);
 
-        scoringDataDto.setMaritalStatus(MaritalStatusEnum.MARRIED);
+        scoringDataDto.setMaritalStatus(MaritalStatus.MARRIED);
         assertEquals(rate.subtract(new BigDecimal(2)),scoringService.score(scoringDataDto));
-        scoringDataDto.setMaritalStatus(MaritalStatusEnum.DIVORCED);
+        scoringDataDto.setMaritalStatus(MaritalStatus.DIVORCED);
         assertEquals(rate.add(new BigDecimal(2)),scoringService.score(scoringDataDto));
-        scoringDataDto.setMaritalStatus(MaritalStatusEnum.WIDOWED);
+        scoringDataDto.setMaritalStatus(MaritalStatus.WIDOW_WIDOWER);
 
-        scoringDataDto.setGender(GendersEnum.FEMALE);
+        scoringDataDto.setGender(Genders.FEMALE);
         scoringDataDto.setBirthdate(LocalDate.of(1980,7,30));
         assertEquals(rate.subtract(new BigDecimal(3)), scoringService.score(scoringDataDto));
-        scoringDataDto.setGender(GendersEnum.FEMALE);
+        scoringDataDto.setGender(Genders.FEMALE);
         assertEquals(rate.subtract(new BigDecimal(3)), scoringService.score(scoringDataDto));
-        scoringDataDto.setGender(GendersEnum.NONBINARY);
+        scoringDataDto.setGender(Genders.NON_BINARY);
         assertEquals(rate.add(new BigDecimal(7)), scoringService.score(scoringDataDto));
     }
 

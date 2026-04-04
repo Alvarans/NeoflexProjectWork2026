@@ -5,10 +5,15 @@ import com.example.deal.entity.CreditEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * Маппер из сущности кредита в объект передачи и наоборот
+ */
 @Mapper(componentModel = "spring")
 public interface CreditMapper {
     @Mapping(target = "creditId", ignore = true)
+    @Mapping(target = "paymentSchedule", source = "paymentSchedule")
     CreditEntity toEntity(CreditDto dto);
 
+    @Mapping(target = "paymentSchedule", source = "paymentSchedule")
     CreditDto toDto(CreditEntity entity);
 }

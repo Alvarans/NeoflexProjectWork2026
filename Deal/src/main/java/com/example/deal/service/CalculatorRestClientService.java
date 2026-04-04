@@ -12,6 +12,9 @@ import org.springframework.web.client.RestClient;
 
 import java.util.List;
 
+/**
+ * Rest client сервис для отправления запросов в Calculator
+ */
 @Service
 public class CalculatorRestClientService {
     private final RestClient restClient;
@@ -22,6 +25,11 @@ public class CalculatorRestClientService {
                 .build();
     }
 
+    /**
+     * Получение списка из 4 предложений от Calculator
+     * @param loanStatementRequestDto - Информация для запроса по кредитным предложениям
+     * @return - список из 4 предложений от худшего к лучшему
+     */
     public List<LoanOfferDto> getOffers(LoanStatementRequestDto loanStatementRequestDto) {
         return restClient.post()
                 .uri("/calculator/offers")
@@ -31,6 +39,11 @@ public class CalculatorRestClientService {
                 .body(new ParameterizedTypeReference<List<LoanOfferDto>>() {});
     }
 
+    /**
+     * Подсчёт кредита для клиента, проводимый в Calculator
+     * @param scoringDataDto - собранная информация о клиенте, кредите и сотруднике, обслуживающем его
+     * @return Объект кредита, содержащий в себе основную информацию о нём + график платежей
+     */
     public CreditDto calculateCredit(ScoringDataDto scoringDataDto) {
         return restClient.post()
                 .uri("calculator/calc")

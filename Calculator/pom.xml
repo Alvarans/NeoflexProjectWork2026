@@ -136,19 +136,6 @@
                             <inputSpec>${project.basedir}/src/main/resources/api-conf.yaml</inputSpec>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
-                            <!-- Маппинги для enum -->
-                            <typeMappings>
-                                <typeMapping>EmploymentStatus=com.example.calculator.enums.EmploymentStatusEnum</typeMapping>
-                                <typeMapping>Genders=com.example.calculator.enums.GendersEnum</typeMapping>
-                                <typeMapping>MaritalStatus=com.example.calculator.enums.MaritalStatusEnum</typeMapping>
-                                <typeMapping>Positions=com.example.calculator.enums.PositionsEnum</typeMapping>
-                            </typeMappings>
-                            <importMappings>
-                                <importMapping>com.example.calculator.enums.EmploymentStatusEnum</importMapping>
-                                <importMapping>com.example.calculator.enums.GendersEnum</importMapping>
-                                <importMapping>com.example.calculator.enums.MaritalStatusEnum</importMapping>
-                                <importMapping>com.example.calculator.enums.PositionsEnum</importMapping>
-                            </importMappings>
                             <!-- Настройки генерации -->
                             <configOptions>
                                 <interfaceOnly>true</interfaceOnly>
