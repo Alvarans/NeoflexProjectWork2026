@@ -24,16 +24,12 @@ import static org.mockito.Mockito.when;
 public class DealServiceTest {
     @Mock
     private ClientService clientService;
-
     @Mock
     private StatementService statementService;
-
     @Mock
     private CreditService creditService;
-
     @Mock
     private CalculatorRestClientService calculatorRestClientService;
-
     @InjectMocks
     private DealService dealService;
 

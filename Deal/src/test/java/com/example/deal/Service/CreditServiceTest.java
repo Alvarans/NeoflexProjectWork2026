@@ -21,10 +21,8 @@ import static org.mockito.Mockito.*;
 public class CreditServiceTest {
     @Mock
     private CreditRepository creditRepository;
-
     @Mock
     private CreditMapper creditMapper;
-
     @InjectMocks
     private CreditService creditService;
 

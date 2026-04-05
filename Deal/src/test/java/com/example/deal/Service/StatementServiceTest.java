@@ -21,13 +21,10 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class StatementServiceTest {
-
     @Mock
     private StatementRepository statementRepository;
-
     @Mock
     private ClientService clientService;
-
     @InjectMocks
     private StatementService statementService;
 
@@ -42,7 +39,7 @@ public class StatementServiceTest {
         when(clientService.getClientEntityByClientId(clientId)).thenReturn(clientEntity);
         when(statementRepository.save(any(StatementEntity.class))).thenAnswer(invocation -> {
             StatementEntity entity = invocation.getArgument(0);
-            entity.setStatementId(statementId); // эмулируем авто-генерацию ID
+            entity.setStatementId(statementId);
             return entity;
         });
 
