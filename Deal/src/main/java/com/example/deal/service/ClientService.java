@@ -24,7 +24,7 @@ public class ClientService {
      *                                Содержит первичную информацию по клиенту
      * @return ID созданного клиента для дальнейшего взаимодействия
      */
-    UUID createClient(LoanStatementRequestDto loanStatementRequestDto) {
+    public UUID createClient(LoanStatementRequestDto loanStatementRequestDto) {
         ClientEntity clientEntity = new ClientEntity();
         clientEntity.setLastName(loanStatementRequestDto.getLastName());
         clientEntity.setFirstName(loanStatementRequestDto.getFirstName());
@@ -47,7 +47,7 @@ public class ClientService {
      * @param clientId Идентификационный номер клиента
      * @return Запись о клиенте
      */
-    ClientEntity getClientEntityByClientId(UUID clientId) {
+    public ClientEntity getClientEntityByClientId(UUID clientId) {
         return clientRepository.getReferenceById(clientId);
     }
 
@@ -56,7 +56,7 @@ public class ClientService {
      * @param clientId - Идентификационный номер клиента
      * @param finishRegistrationRequestDto - Информация о клиенте после полной регистрации
      */
-    void updateClientAfterCreditCalculation(UUID clientId, FinishRegistrationRequestDto finishRegistrationRequestDto) {
+    public void updateClientAfterCreditCalculation(UUID clientId, FinishRegistrationRequestDto finishRegistrationRequestDto) {
         ClientEntity clientEntity = getClientEntityByClientId(clientId);
         clientEntity.setGender(finishRegistrationRequestDto.getGender());
         clientEntity.setMaritalStatus(finishRegistrationRequestDto.getMaritalStatus());

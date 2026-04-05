@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -18,9 +19,11 @@ import java.util.List;
 @Service
 public class CalculatorRestClientService {
     private final RestClient restClient;
+    private final ObjectMapper objectMapper;
 
-    public CalculatorRestClientService() {
-        this.restClient = RestClient.builder()
+    public CalculatorRestClientService(RestClient.Builder restClientBuilder, ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+        this.restClient = restClientBuilder
                 .baseUrl("http://localhost:8010")
                 .build();
     }
@@ -46,14 +49,14 @@ public class CalculatorRestClientService {
      */
     public CreditDto calculateCredit(ScoringDataDto scoringDataDto) {
         return restClient.post()
-                .uri("calculator/calc")
+                .uri("/calculator/calc")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(scoringDataDto)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
-                    // Логируем или выбрасываем кастомное исключение,
-                    // так как контроллер при ошибке вернет пустой CreditDto
-                    //log.error("Ошибка при расчете кредита: {}", response.getStatusCode());
+                    // Извлекаем тело (пустой CreditDto согласно вашей спеке)
+                    CreditDto errorDto = objectMapper.readValue(response.getBody(), CreditDto.class);
+                    throw new IllegalArgumentException("Check your data. Validation goes wrong");
                 })
                 .body(CreditDto.class);
     }

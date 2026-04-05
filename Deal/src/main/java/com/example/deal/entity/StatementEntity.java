@@ -10,7 +10,6 @@ import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -54,7 +53,7 @@ public class StatementEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "status_history", columnDefinition = "jsonb")
-    private List<StatementStatusHistoryDto> statusHistory = new ArrayList<>();;
+    private List<StatementStatusHistoryDto> statusHistory = new ArrayList<>();
 
     public void updateStatus(ApplicationStatus applicationStatus) {
         this.statusHistory.add(new StatementStatusHistoryDto(this.applicationStatus, OffsetDateTime.now(), ChangeType.MANUAL));

@@ -40,7 +40,7 @@ public class StatementService {
      * Обновление состояния заявки (или сохранение новой)
      * @param statementEntity Сущность заявки
      */
-    void updateStatement(StatementEntity statementEntity){
+    public void updateStatement(StatementEntity statementEntity){
         statementRepository.save(statementEntity);
         log.info("Updated statement saved in database: {}", statementEntity);
     }
@@ -50,7 +50,7 @@ public class StatementService {
      * @param statementId Идентификатор заявки
      * @return Искомая заявка
      */
-    StatementEntity getStatement(UUID statementId){
+    public StatementEntity getStatement(UUID statementId){
         return statementRepository.findByStatementId(statementId);
     }
 
@@ -58,7 +58,7 @@ public class StatementService {
      * Обновление статуса заявки после того, как клиент выбрал предложение по кредиту
      * @param loanOfferDto Выбранное предложение
      */
-    void updateStatementWithChoosedOffer(LoanOfferDto loanOfferDto){
+    public void updateStatementWithChoosedOffer(LoanOfferDto loanOfferDto){
         StatementEntity statementEntity = getStatement(loanOfferDto.getStatementId());
         statementEntity.setAppliedOffer(loanOfferDto);
         statementEntity.updateStatus(ApplicationStatus.APPROVED);

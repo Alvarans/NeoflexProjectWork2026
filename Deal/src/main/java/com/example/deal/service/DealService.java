@@ -73,6 +73,7 @@ public class DealService {
         log.info("Creating a new statement");
         UUID statementID = statementService.createStatement(clientId);
         List<LoanOfferDto> offers = calculatorRestClientService.getOffers(loanStatementRequestDto);
+
         for (LoanOfferDto loanOfferDto : offers) {
             loanOfferDto.setStatementId(statementID);
         }
