@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: spring-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: neoflexbd
+      POSTGRES_USER: neoflexuser
+      POSTGRES_PASSWORD: neoflex
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U neoflexuser -d neoflexbd"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

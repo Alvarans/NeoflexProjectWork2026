@@ -2,8 +2,8 @@ spring:
   application:
     name: deal
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
+    url: jdbc:postgresql://localhost:5432/neoflexbd
+    username: neoflexuser
     password: neoflex
   liquibase:
     enabled: true
