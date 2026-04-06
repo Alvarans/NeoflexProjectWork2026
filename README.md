@@ -1,2 +1,2 @@
-# NeoflexProjectWork2026
+# neoflex-project-work-2026
 Создание Web-приложения с микросервисной архитектурой, как часть обучения в учебном центре Neoflex

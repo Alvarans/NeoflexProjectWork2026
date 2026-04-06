@@ -4,14 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.example.api</groupId>
-        <artifactId>api</artifactId>
+        <artifactId>neoflex-project-work-2026</artifactId>
         <version>0.0.1-SNAPSHOT</version> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>Database</artifactId>
+    <artifactId>db</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Database</name>
-    <description>Database</description>
+    <name>db</name>
+    <description>db</description>
     <properties>
         <java.version>21</java.version>
     </properties>
