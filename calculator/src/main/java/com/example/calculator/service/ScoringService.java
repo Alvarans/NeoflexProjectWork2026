@@ -1,7 +1,12 @@
 package com.example.calculator.service;
 
-import com.example.api.common.dto.models.*;
-import com.example.api.common.dto.models.EmploymentStatus;
+
+import com.example.models.EmploymentStatus;
+import com.example.models.Genders;
+import com.example.models.LoanStatementRequestDto;
+import com.example.models.MaritalStatus;
+import com.example.models.Positions;
+import com.example.models.ScoringDataDto;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;

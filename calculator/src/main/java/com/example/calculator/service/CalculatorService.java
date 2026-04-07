@@ -1,12 +1,16 @@
 package com.example.calculator.service;
 
 
+import com.example.models.CreditDto;
+import com.example.models.LoanOfferDto;
+import com.example.models.LoanStatementRequestDto;
+import com.example.models.PaymentScheduleElementDto;
+import com.example.models.ScoringDataDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
 

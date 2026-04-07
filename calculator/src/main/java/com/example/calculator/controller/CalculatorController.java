@@ -1,9 +1,10 @@
 package com.example.calculator.controller;
-
-import com.example.calculator.api.CalculatorApi;
-import com.example.api.common.dto.*;
 import com.example.calculator.service.CalculatorService;
 import com.example.calculator.service.ScoringService;
+import com.example.models.CreditDto;
+import com.example.models.LoanOfferDto;
+import com.example.models.LoanStatementRequestDto;
+import com.example.models.ScoringDataDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

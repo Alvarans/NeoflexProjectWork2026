@@ -79,6 +79,11 @@
             <version>0.2.6</version>
         </dependency>
         <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.6</version>
+        </dependency>
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>5.11.0</version>
@@ -150,12 +155,11 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/open-api.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/calculator-api-conf.yaml</inputSpec>
                             <output>${project.basedir}/target/generated-sources/openapi</output>
                             <generatorName>spring</generatorName>
                             <generateSupportingFiles>false</generateSupportingFiles>
                             <modelPackage>com.example.models</modelPackage>
-                            <apiPackage>com.example.controller</apiPackage>
                             <configOptions>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useSpringBoot3>true</useSpringBoot3>
