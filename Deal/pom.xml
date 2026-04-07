@@ -4,14 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.example.api</groupId>
-        <artifactId>api</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <artifactId>neoflex-project-work</artifactId>
+        <version>0.0.1-SNAPSHOT</version> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example</groupId>
-    <artifactId>ApiContract</artifactId>
+    <groupId>org.neoflex</groupId>
+    <artifactId>Deal</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ApiContract</name>
-    <description>ApiContract</description>
+    <name>Deal</name>
+    <description>Deal</description>
     <url/>
     <licenses>
         <license/>
@@ -29,25 +29,55 @@
         <java.version>21</java.version>
     </properties>
     <dependencies>
+        <!--<dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.21.1</version>
+        </dependency> -->
+        <!-- Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <groupId>com.example</groupId> <!-- Ваш groupId из ApiContract -->
+            <artifactId>ApiContract</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <source>21</source>
+                    <source>21</source> <!-- Ваша версия Java (17 или 21) -->
                     <target>21</target>
                     <annotationProcessorPaths>
                         <!-- Позволяет компилятору видеть аннотации Lombok (@Slf4j, @Data и др.) -->
@@ -55,6 +85,16 @@
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>1.18.38</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>1.5.5.Final</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -72,11 +112,6 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <!--
-                                <source>${project.build.directory}/generated-sources/openapi/common/src/main/java</source>
-                                <source>${project.build.directory}/generated-sources/openapi/calculator/src/main/java</source>
-                                <source>${project.build.directory}/generated-sources/openapi/deal/src/main/java</source>
-                                -->
                                 <source>${project.build.directory}/generated-sources/openapi/src/main/java</source>
                             </sources>
                         </configuration>
@@ -89,38 +124,51 @@
                 <version>7.3.0</version>
                 <executions>
                     <execution>
-                        <id>generate-common</id>
-                        <goals><goal>generate</goal></goals>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
                         <configuration>
-                            <!--<inputSpec>${project.basedir}/src/main/resources/openapi/common-components.yaml</inputSpec> -->
-                            <inputSpec>${project.basedir}/src/main/resources/common-components.yaml</inputSpec>
-                            <output>${project.basedir}/target/generated-sources/openapi</output>
+                            <inputSpec>${maven.multiModuleProjectDirectory}/ApiContract/src/main/resources/deal-api-conf.yaml</inputSpec>
+                            <output>${project.build.directory}/generated-sources/openapi</output>
                             <generatorName>spring</generatorName>
-                            <modelPackage>com.example.api.common.dto</modelPackage>
+                            <library>spring-boot</library>
+                            <importMappings>
+                                <importMapping>LoanStatementRequestDto=com.example.api.common.dto.LoanStatementRequestDto</importMapping>
+                                <importMapping>LoanOfferDto=com.example.api.common.dto.LoanOfferDto</importMapping>
+                                <importMapping>EmploymentDto=com.example.api.common.dto.EmploymentDto</importMapping>
+                                <importMapping>Genders=com.example.api.common.dto.Genders</importMapping>
+                                <importMapping>MaritalStatus=com.example.api.common.dto.MaritalStatus</importMapping>
+                            </importMappings>
+
+                            <!-- 2. Указываем генератору использовать этот путь ВМЕСТО создания нового файла -->
+                            <typeMappings>
+                                <typeMapping>LoanStatementRequestDto=com.example.api.common.dto.LoanStatementRequestDto</typeMapping>
+                                <typeMapping>LoanOfferDto=com.example.api.common.dto.LoanOfferDto</typeMapping>
+                                <typeMapping>EmploymentDto=com.example.api.common.dto.EmploymentDto</typeMapping>
+                                <typeMapping>Genders=com.example.api.common.dto.Genders</typeMapping>
+                                <typeMapping>MaritalStatus=com.example.api.common.dto.MaritalStatus</typeMapping>
+                            </typeMappings>
                             <configOptions>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useSpringBoot3>true</useSpringBoot3>
                                 <useBeanValidation>true</useBeanValidation>
                                 <useJakartaBeanValidation>true</useJakartaBeanValidation>
                                 <performBeanValidation>true</performBeanValidation>
-                                <!-- Добавляем аннотации Lombok для всех видов конструкторов -->
+
                                 <additionalModelTypeAnnotations>
                                     @lombok.NoArgsConstructor
                                     @lombok.AllArgsConstructor
                                     @lombok.Builder
                                 </additionalModelTypeAnnotations>
-                                <!-- Эта опция заставит генератор создать конструктор для обязательных (required) полей -->
+
                                 <generatedConstructorWithRequiredArgs>true</generatedConstructorWithRequiredArgs>
                                 <useTags>true</useTags>
                                 <skipDefaultInterface>true</skipDefaultInterface>
-                                <!--
-                                <apiPackage>com.example.api.api</apiPackage>
-                                <modelPackage>com.example.api.dto</modelPackage> -->
+                                <apiPackage>com.example.deal.api</apiPackage>
+                                <modelPackage>com.example.deal.dto</modelPackage>
                                 <generateBuilders>true</generateBuilders>
                                 <serializableModel>true</serializableModel>
                             </configOptions>
-                            <generateApis>false</generateApis>
-                            <generateSupportingFiles>false</generateSupportingFiles>
                         </configuration>
                     </execution>
                 </executions>
@@ -139,3 +187,4 @@
     </build>
 
 </project>
+

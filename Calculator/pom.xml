@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.example.api</groupId>
-        <artifactId>api</artifactId>
+        <artifactId>neoflex-project-work</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <groupId>com.example</groupId>
