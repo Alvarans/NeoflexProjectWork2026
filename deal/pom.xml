@@ -23,13 +23,26 @@
              <artifactId>spring-boot-starter-data-jpa</artifactId>
              <version>2.7.4</version>
          </dependency>
-    </dependencies>
+         <dependency>
+             <groupId>org.projectlombok</groupId>
+             <artifactId>lombok-mapstruct-binding</artifactId>
+             <version>0.2.0</version>
+         </dependency>
+         <dependency>
+             <groupId>org.projectlombok</groupId>
+             <artifactId>lombok</artifactId>
+             <version>RELEASE</version>
+             <scope>compile</scope>
+         </dependency>
+
+     </dependencies>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>4.0.5</version>
                 <configuration>
                     <excludes>
                         <exclude>
@@ -85,67 +98,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>7.3.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>
-                                ${maven.multiModuleProjectDirectory}/api/src/main/resources/deal-api-conf.yaml
-                            </inputSpec>
-                            <generatorName>spring</generatorName>
-                            <library>spring-boot</library>
-                            <importMappings>
-                                <importMapping>
-                                    LoanStatementRequestDto=com.example.api.common.dto.LoanStatementRequestDto
-                                </importMapping>
-                                <importMapping>LoanOfferDto=com.example.api.common.dto.LoanOfferDto</importMapping>
-                                <importMapping>EmploymentDto=com.example.api.common.dto.EmploymentDto</importMapping>
-                                <importMapping>Genders=com.example.api.common.dto.Genders</importMapping>
-                                <importMapping>MaritalStatus=com.example.api.common.dto.MaritalStatus</importMapping>
-                            </importMappings>
-
-                            <!-- 2. Указываем генератору использовать этот путь ВМЕСТО создания нового файла -->
-                            <typeMappings>
-                                <typeMapping>
-                                    LoanStatementRequestDto=com.example.api.common.dto.LoanStatementRequestDto
-                                </typeMapping>
-                                <typeMapping>LoanOfferDto=com.example.api.common.dto.LoanOfferDto</typeMapping>
-                                <typeMapping>EmploymentDto=com.example.api.common.dto.EmploymentDto</typeMapping>
-                                <typeMapping>Genders=com.example.api.common.dto.Genders</typeMapping>
-                                <typeMapping>MaritalStatus=com.example.api.common.dto.MaritalStatus</typeMapping>
-                            </typeMappings>
-                            <configOptions>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useSpringBoot3>true</useSpringBoot3>
-                                <useBeanValidation>true</useBeanValidation>
-                                <useJakartaBeanValidation>true</useJakartaBeanValidation>
-                                <performBeanValidation>true</performBeanValidation>
-
-                                <additionalModelTypeAnnotations>
-                                    @lombok.NoArgsConstructor
-                                    @lombok.AllArgsConstructor
-                                    @lombok.Builder
-                                </additionalModelTypeAnnotations>
-
-                                <generatedConstructorWithRequiredArgs>true</generatedConstructorWithRequiredArgs>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                                <apiPackage>com.example.deal.api</apiPackage>
-                                <modelPackage>com.example.deal.dto</modelPackage>
-                                <generateBuilders>true</generateBuilders>
-                                <serializableModel>true</serializableModel>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

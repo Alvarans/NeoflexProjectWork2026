@@ -15,13 +15,5 @@ public class DealApplication {
         SpringApplication.run(DealApplication.class, args);
     }
 
-    @Bean
-    CommandLineRunner checkLiquibaseConfig(Environment env) {
-        return args -> {
-            System.out.println("LIQUIBASE ENABLED = " +
-                    env.getProperty("spring.liquibase.enabled"));
-            System.out.println("LIQUIBASE CHANGELOG = " +
-                    env.getProperty("spring.liquibase.change-log"));
-        };
-    }
+
 }
