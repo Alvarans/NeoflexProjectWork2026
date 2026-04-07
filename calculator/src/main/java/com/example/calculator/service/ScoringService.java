@@ -1,14 +1,13 @@
 package com.example.calculator.service;
 
-import com.example.api.common.dto.EmploymentStatus;
-import com.example.api.common.dto.*;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
+import com.example.api.common.dto.models.*;
+import com.example.api.common.dto.models.EmploymentStatus;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.Period;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j

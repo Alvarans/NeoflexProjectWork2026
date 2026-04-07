@@ -120,25 +120,25 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.codehaus.mojo</groupId>-->
-<!--                <artifactId>build-helper-maven-plugin</artifactId>-->
-<!--                <version>3.5.0</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>add-source</id>-->
-<!--                        <phase>generate-sources</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>add-source</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <sources>-->
-<!--                                <source>${project.build.directory}/generated-sources/openapi/src/main/java</source>-->
-<!--                            </sources>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/openapi/src/main/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
@@ -150,11 +150,12 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/common-components.yaml</inputSpec>
-                            <output>${project.basedir}/target/generated-sources/common-components</output>
+                            <inputSpec>${project.basedir}/src/main/resources/open-api.yaml</inputSpec>
+                            <output>${project.basedir}/target/generated-sources/openapi</output>
                             <generatorName>spring</generatorName>
                             <generateSupportingFiles>false</generateSupportingFiles>
-                            <modelPackage>com.example.api.common.dto.common-components</modelPackage>
+                            <modelPackage>com.example.models</modelPackage>
+                            <apiPackage>com.example.controller</apiPackage>
                             <configOptions>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useSpringBoot3>true</useSpringBoot3>
@@ -178,49 +179,6 @@
                             </configOptions>
                             <generateApis>false</generateApis>
                             <generateSupportingFiles>false</generateSupportingFiles>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-openapi-calculator</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/calculator-api-conf.yaml</inputSpec>
-                            <output>${project.basedir}/target/generated-sources/calculator</output>
-                            <generatorName>spring</generatorName>
-                            <generateSupportingFiles>false</generateSupportingFiles>
-                            <generateApis>false</generateApis>
-                            <modelPackage>com.example.api.common.dto.calculator</modelPackage>
-                            <configOptions>
-                                <dateLibrary>java8-localdatetime</dateLibrary>
-                            </configOptions>
-                            <typeMappings>
-                                <typeMapping>float=java.math.BigDecimal</typeMapping>
-                                <typeMapping>double=java.math.BigDecimal</typeMapping>
-                            </typeMappings>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-openapi-deal</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/deal-api-conf.yaml</inputSpec>
-                            <output>${project.basedir}/target/generated-sources/deal</output>
-
-                            <generatorName>spring</generatorName>
-                            <generateSupportingFiles>false</generateSupportingFiles>
-                            <generateApis>false</generateApis>
-                            <modelPackage>com.example.api.common.dto.deal</modelPackage>
-                            <configOptions>
-                                <dateLibrary>java8-localdatetime</dateLibrary>
-                            </configOptions>
-                            <typeMappings>
-                                <typeMapping>float=java.math.BigDecimal</typeMapping>
-                                <typeMapping>double=java.math.BigDecimal</typeMapping>
-                            </typeMappings>
                         </configuration>
                     </execution>
                 </executions>

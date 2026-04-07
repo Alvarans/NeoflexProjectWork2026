@@ -1,19 +1,18 @@
 package com.example.deal.controller;
 
+import com.example.api.common.dto.models.LoanOfferDto;
+import com.example.api.common.dto.LoanStatementRequestDto;
 import com.example.deal.api.DealApi;
 import com.example.deal.dto.FinishRegistrationRequestDto;
-import com.example.api.common.dto.LoanOfferDto;
-import com.example.api.common.dto.LoanStatementRequestDto;
 import com.example.deal.service.DealService;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Контроллер, предоставляющий эндпоинты для взаимодействия с deal MVP
