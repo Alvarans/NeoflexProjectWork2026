@@ -3,7 +3,9 @@ info:
   title: Credit Calculator API
   version: 1.0.0
   description: Микросервис для расчета кредитных предложений с разными условиями и параметров кредита.
-
+tags:
+  - name: Calculator
+  - name: Deal
 paths:
   /calculator/offers:
     post:

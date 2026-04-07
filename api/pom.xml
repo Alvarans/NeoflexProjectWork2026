@@ -174,14 +174,14 @@
                                 <!-- Эта опция заставит генератор создать конструктор для обязательных (required) полей -->
                                 <generatedConstructorWithRequiredArgs>true</generatedConstructorWithRequiredArgs>
                                 <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
                                 <!--
                                 <apiPackage>com.example.api.api</apiPackage>
                                 <modelPackage>com.example.api.dto</modelPackage> -->
                                 <generateBuilders>true</generateBuilders>
+                                <skipDefaultInterface>true</skipDefaultInterface>
                                 <serializableModel>true</serializableModel>
                             </configOptions>
-                            <generateApis>false</generateApis>
+                            <generateApis>true</generateApis>
                             <generateSupportingFiles>false</generateSupportingFiles>
                         </configuration>
                     </execution>
