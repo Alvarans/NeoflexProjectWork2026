@@ -1,11 +1,13 @@
 package com.example.calculator.service;
 
-import com.example.api.common.dto.*;
+import com.example.models.CreditDto;
+import com.example.models.LoanOfferDto;
 import com.example.models.LoanStatementRequestDto;
+import com.example.models.ScoringDataDto;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import org.junit.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
