@@ -7,6 +7,7 @@ import com.example.api.common.dto.ScoringDataDto;
 import com.example.deal.dto.ApplicationStatus;
 import com.example.deal.dto.FinishRegistrationRequestDto;
 import com.example.deal.entity.StatementEntity;
+import com.example.deal.mapping.ScoringDataMapper;
 import com.example.deal.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ public class DealServiceImpl implements DealService {
     private final StatementService statementService;
     private final CreditService creditService;
     private final CalculatorRestClientService calculatorRestClientService;
+    private final ScoringDataMapper scoringDataMapper;
 
     /**
      * Формирование данных для подсчёта кредита и дополнение информации о клиенте
@@ -42,7 +44,7 @@ public class DealServiceImpl implements DealService {
         }
         StatementEntity statementEntity = statementService.getStatement(statementId);
         //Наполнение данных для подсчёта с помощью заявки и доп.информации
-        ScoringDataDto scoringDataDto = new ScoringDataDto();
+        /*ScoringDataDto scoringDataDto = new ScoringDataDto();
         scoringDataDto.setAmount(statementEntity.getAppliedOffer().getTotalAmount());
         scoringDataDto.setTerm(statementEntity.getAppliedOffer().getTerm());
         scoringDataDto.setFirstName(statementEntity.getClient().getFirstName());
@@ -59,7 +61,8 @@ public class DealServiceImpl implements DealService {
         scoringDataDto.setEmployment(finishRegistrationRequestDto.getEmployment());
         scoringDataDto.setAccountNumber(finishRegistrationRequestDto.getAccountNumber());
         scoringDataDto.setIsInsuranceEnabled(statementEntity.getAppliedOffer().getIsInsuranceEnabled());
-        scoringDataDto.setIsSalaryClient(statementEntity.getAppliedOffer().getIsSalaryClient());
+        scoringDataDto.setIsSalaryClient(statementEntity.getAppliedOffer().getIsSalaryClient());*/
+        ScoringDataDto scoringDataDto = scoringDataMapper.toScoringDataDto(statementEntity, finishRegistrationRequestDto);
         log.info("ScoringDataDto fullfiled for credit calculation: {}", scoringDataDto);
         CreditDto creditDto = calculatorRestClientService.calculateCredit(scoringDataDto);
         log.info("Credit is calculated: {}", creditDto);

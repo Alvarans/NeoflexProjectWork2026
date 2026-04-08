@@ -50,7 +50,6 @@
                     <source>21</source>
                     <target>21</target>
                     <annotationProcessorPaths>
-                        <!-- Позволяет компилятору видеть аннотации Lombok (@Slf4j, @Data и др.) -->
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
@@ -97,19 +96,14 @@
                                 <useBeanValidation>true</useBeanValidation>
                                 <useJakartaBeanValidation>true</useJakartaBeanValidation>
                                 <performBeanValidation>true</performBeanValidation>
-                                <!-- Добавляем аннотации Lombok для всех видов конструкторов -->
                                 <additionalModelTypeAnnotations>
                                     @lombok.NoArgsConstructor
                                     @lombok.AllArgsConstructor
                                     @lombok.Builder
                                 </additionalModelTypeAnnotations>
-                                <!-- Эта опция заставит генератор создать конструктор для обязательных (required) полей -->
                                 <generatedConstructorWithRequiredArgs>true</generatedConstructorWithRequiredArgs>
                                 <useTags>true</useTags>
                                 <skipDefaultInterface>true</skipDefaultInterface>
-                                <!--
-                                <apiPackage>com.example.api.api</apiPackage>
-                                <modelPackage>com.example.api.dto</modelPackage> -->
                                 <generateBuilders>true</generateBuilders>
                                 <serializableModel>true</serializableModel>
                             </configOptions>
