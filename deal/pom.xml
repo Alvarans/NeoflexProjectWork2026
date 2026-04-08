@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.example.api</groupId>
+        <artifactId>neoflex-project-work</artifactId>
+        <version>0.0.1-SNAPSHOT</version> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>org.neoflex</groupId>
+    <artifactId>Deal</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>Deal</name>
+    <description>Deal</description>
+    <url/>
+    <licenses>
+        <license/>
+    </licenses>
+    <developers>
+        <developer/>
+    </developers>
+    <scm>
+        <connection/>
+        <developerConnection/>
+        <tag/>
+        <url/>
+    </scm>
+    <properties>
+        <java.version>21</java.version>
+    </properties>
+    <dependencies>
+        <!--<dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.21.1</version>
+        </dependency> -->
+        <!-- Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.example</groupId> <!-- Ваш groupId из ApiContract -->
+            <artifactId>ApiContract</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>21</source> <!-- Ваша версия Java (17 или 21) -->
+                    <target>21</target>
+                    <annotationProcessorPaths>
+                        <!-- Позволяет компилятору видеть аннотации Lombok (@Slf4j, @Data и др.) -->
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.38</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>1.5.5.Final</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/openapi/src/main/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>7.3.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${maven.multiModuleProjectDirectory}/apiContract/src/main/resources/deal-api-conf.yaml</inputSpec>
+                            <output>${project.build.directory}/generated-sources/openapi</output>
+                            <generatorName>spring</generatorName>
+                            <library>spring-boot</library>
+                            <importMappings>
+                                <importMapping>LoanStatementRequestDto=com.example.api.common.dto.LoanStatementRequestDto</importMapping>
+                                <importMapping>LoanOfferDto=com.example.api.common.dto.LoanOfferDto</importMapping>
+                                <importMapping>EmploymentDto=com.example.api.common.dto.EmploymentDto</importMapping>
+                                <importMapping>Genders=com.example.api.common.dto.Genders</importMapping>
+                                <importMapping>MaritalStatus=com.example.api.common.dto.MaritalStatus</importMapping>
+                            </importMappings>
+
+                            <!-- 2. Указываем генератору использовать этот путь ВМЕСТО создания нового файла -->
+                            <typeMappings>
+                                <typeMapping>LoanStatementRequestDto=com.example.api.common.dto.LoanStatementRequestDto</typeMapping>
+                                <typeMapping>LoanOfferDto=com.example.api.common.dto.LoanOfferDto</typeMapping>
+                                <typeMapping>EmploymentDto=com.example.api.common.dto.EmploymentDto</typeMapping>
+                                <typeMapping>Genders=com.example.api.common.dto.Genders</typeMapping>
+                                <typeMapping>MaritalStatus=com.example.api.common.dto.MaritalStatus</typeMapping>
+                            </typeMappings>
+                            <configOptions>
+                                <interfaceOnly>true</interfaceOnly>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <useBeanValidation>true</useBeanValidation>
+                                <useJakartaBeanValidation>true</useJakartaBeanValidation>
+                                <performBeanValidation>true</performBeanValidation>
+
+                                <additionalModelTypeAnnotations>
+                                    @lombok.NoArgsConstructor
+                                    @lombok.AllArgsConstructor
+                                    @lombok.Builder
+                                </additionalModelTypeAnnotations>
+
+                                <generatedConstructorWithRequiredArgs>true</generatedConstructorWithRequiredArgs>
+                                <useTags>true</useTags>
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <apiPackage>com.example.deal.api</apiPackage>
+                                <modelPackage>com.example.deal.dto</modelPackage>
+                                <generateBuilders>true</generateBuilders>
+                                <serializableModel>true</serializableModel>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>-XX:+EnableDynamicAgentLoading
+                        -Dnet.bytebuddy.experimental=true</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+

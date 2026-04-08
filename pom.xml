@@ -17,10 +17,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>Calculator</module>
-        <module>Deal</module>
-        <module>Database</module>
-        <module>ApiContract</module>
+        <module>calculator</module>
+        <module>deal</module>
+        <module>database</module>
+        <module>apiContract</module>
     </modules>
 
     <dependencies>

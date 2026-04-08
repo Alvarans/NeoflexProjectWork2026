@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: deal
+  datasource:
+    url: jdbc:postgresql://localhost:5432/neoflexbd
+    username: neoflexuser
+    password: neoflex
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+services:
+  calculator:
+    url: http://localhost:8010
+
+server:
+  port: 8011
+
+logging:
+  level:
+    liquibase: DEBUG
