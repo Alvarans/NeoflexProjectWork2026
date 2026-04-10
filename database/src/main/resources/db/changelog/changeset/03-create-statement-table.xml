@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+           http://www.liquibase.org/xml/ns/dbchangelog
+           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260401-003" author="Alvarans">
+        <createTable tableName="statement">
+            <column name="statement_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <!-- Связь с таблицей client -->
+            <column name="client_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_statement_client" referencedTableName="client" referencedColumnNames="client_id"/>
+            </column>
+            <!-- Связь с таблицей credit -->
+            <column name="credit_id" type="UUID">
+                <constraints foreignKeyName="fk_statement_credit" referencedTableName="credit" referencedColumnNames="credit_id"/>
+            </column>
+
+            <column name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="applied_offer" type="jsonb"/>
+            <column name="sign_date" type="TIMESTAMP"/>
+            <column name="ses_code" type="VARCHAR(255)"/>
+            <column name="status_history" type="jsonb"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
