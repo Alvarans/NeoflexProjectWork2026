@@ -1,18 +1,11 @@
 package com.example.calculator.service;
 
-import com.example.api.common.dto.LoanStatementRequestDto;
 import com.example.api.common.dto.ScoringDataDto;
 
 import java.math.BigDecimal;
 
 
 public interface ScoringService {
-    /**
-     * Method for prescoring request dto according to certain rules
-     *
-     * @param requestDto - requested dto. Contains information about client
-     */
-    void prescore(LoanStatementRequestDto requestDto);
 
     /**
      * Method for scoring request dto according to certain rules

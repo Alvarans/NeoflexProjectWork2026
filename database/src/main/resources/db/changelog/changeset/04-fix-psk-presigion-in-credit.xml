@@ -7,6 +7,10 @@
            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="20260404-004" author="Alvarans">
+        <preConditions onFail="CONTINUE">
+            <tableExists tableName="credit"/>
+            <columnExists tableName="credit" columnName="psk"/>
+        </preConditions>
         <modifyDataType tableName="credit"
                         columnName="psk"
                         newDataType="numeric(19, 2)"/>

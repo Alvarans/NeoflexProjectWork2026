@@ -8,10 +8,10 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>ApiContract</artifactId>
+    <artifactId>apiContract</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ApiContract</name>
-    <description>ApiContract</description>
+    <name>apiContract</name>
+    <description>apiContract</description>
     <url/>
     <licenses>
         <license/>

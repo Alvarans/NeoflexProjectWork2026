@@ -30,6 +30,8 @@ public interface StatementService {
      */
     StatementEntity getStatement(UUID statementId);
 
+    StatementEntity getStatementForUpdate(UUID statementId);
+
     /**
      * Обновление статуса заявки после того, как клиент выбрал предложение по кредиту
      * @param loanOfferDto Выбранное предложение

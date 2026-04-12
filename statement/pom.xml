@@ -8,25 +8,59 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>calculator</artifactId>
+    <artifactId>statement</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>calculator</name>
-    <description>calculator</description>
+    <name>statement</name>
+    <description>statement</description>
+    <url/>
+    <licenses>
+        <license/>
+    </licenses>
+    <developers>
+        <developer/>
+    </developers>
+    <scm>
+        <connection/>
+        <developerConnection/>
+        <tag/>
+        <url/>
+    </scm>
     <properties>
         <java.version>21</java.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>apiContract</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-openfeign -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>5.0.1</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>apiContract</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
@@ -56,6 +90,16 @@
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>1.18.38</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>1.5.5.Final</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -89,24 +133,23 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${maven.multiModuleProjectDirectory}/apiContract/src/main/resources/calculator-api-conf.yaml</inputSpec>
+                            <inputSpec>${maven.multiModuleProjectDirectory}/apiContract/src/main/resources/statement-api-conf.yaml</inputSpec>
                             <output>${project.build.directory}/generated-sources/openapi</output>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
                             <importMappings>
                                 <importMapping>LoanStatementRequestDto=com.example.api.common.dto.LoanStatementRequestDto</importMapping>
                                 <importMapping>LoanOfferDto=com.example.api.common.dto.LoanOfferDto</importMapping>
-                                <importMapping>ScoringDataDto=com.example.api.common.dto.ScoringDataDto</importMapping>
-                                <importMapping>CreditDto=com.example.api.common.dto.CreditDto</importMapping>
                                 <importMapping>EmploymentDto=com.example.api.common.dto.EmploymentDto</importMapping>
+                                <importMapping>Genders=com.example.api.common.dto.Genders</importMapping>
+                                <importMapping>MaritalStatus=com.example.api.common.dto.MaritalStatus</importMapping>
                             </importMappings>
-
                             <typeMappings>
                                 <typeMapping>LoanStatementRequestDto=com.example.api.common.dto.LoanStatementRequestDto</typeMapping>
                                 <typeMapping>LoanOfferDto=com.example.api.common.dto.LoanOfferDto</typeMapping>
-                                <typeMapping>ScoringDataDto=com.example.api.common.dto.ScoringDataDto</typeMapping>
-                                <typeMapping>CreditDto=com.example.api.common.dto.CreditDto</typeMapping>
                                 <typeMapping>EmploymentDto=com.example.api.common.dto.EmploymentDto</typeMapping>
+                                <typeMapping>Genders=com.example.api.common.dto.Genders</typeMapping>
+                                <typeMapping>MaritalStatus=com.example.api.common.dto.MaritalStatus</typeMapping>
                             </typeMappings>
                             <configOptions>
                                 <interfaceOnly>true</interfaceOnly>
@@ -124,8 +167,8 @@
                                 <generatedConstructorWithRequiredArgs>true</generatedConstructorWithRequiredArgs>
                                 <useTags>true</useTags>
                                 <skipDefaultInterface>true</skipDefaultInterface>
-                                <apiPackage>com.example.calculator.api</apiPackage>
-                                <modelPackage>com.example.calculator.dto</modelPackage>
+                                <apiPackage>com.example.statement.api</apiPackage>
+                                <modelPackage>com.example.statement.dto</modelPackage>
                                 <generateBuilders>true</generateBuilders>
                                 <serializableModel>true</serializableModel>
                             </configOptions>

@@ -49,6 +49,7 @@ class CalculatorServiceTest {
         when(scoringService.calculateMonthlyPayment(any(), any(), any()))
                 .thenReturn(firstMonthyPayment, firstMonthyPayment, thirdMonthyPayment, secondMonthyPayment);
 
+        requestDto.setAmount(totalAmountWithoutInsur);
         List<LoanOfferDto> loanOfferDtoList = calculatorService.generateOffers(requestDto);
 
         assertEquals(4, loanOfferDtoList.size());

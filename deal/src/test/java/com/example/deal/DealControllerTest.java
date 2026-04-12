@@ -12,7 +12,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import tools.jackson.databind.ObjectMapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -67,14 +69,24 @@ class DealControllerTest {
 
     @Test
     void testSelectOffer_Success() throws Exception {
-        doNothing().when(dealServiceImpl).selectOffer(any());
+        LoanOfferDto loanOfferDto = new LoanOfferDto();
+        loanOfferDto.setStatementId(UUID.randomUUID());
+        loanOfferDto.setTerm(12);
+        loanOfferDto.setTotalAmount(BigDecimal.valueOf(100000));
+        loanOfferDto.setRequestedAmount(BigDecimal.valueOf(100000));
+        loanOfferDto.setMonthlyPayment(BigDecimal.valueOf(10000));
+        loanOfferDto.setRate(BigDecimal.valueOf(15));
+        loanOfferDto.setIsInsuranceEnabled(true);
+        loanOfferDto.setIsSalaryClient(true);
+
+        doNothing().when(dealServiceImpl).selectOffer(any(LoanOfferDto.class));
 
         mockMvc.perform(post("/deal/offer/select")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
+                        .content(new ObjectMapper().writeValueAsString(loanOfferDto)))
                 .andExpect(status().isOk());
 
-        verify(dealServiceImpl, times(1)).selectOffer(any());
+        verify(dealServiceImpl, times(1)).selectOffer(any(LoanOfferDto.class));
     }
 
     @Test

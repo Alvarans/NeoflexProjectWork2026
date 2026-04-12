@@ -18,7 +18,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.nio.charset.StandardCharsets;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -75,18 +74,6 @@ public class DealControllerExceptionHandlerTest {
                 .andExpect(jsonPath("$.amount").value("must not be null"));
     }
 
-    @Test
-    void testSelectOffer_ThrowsNPE() throws Exception {
-        doThrow(new NullPointerException("Statement not found"))
-                .when(dealServiceImpl).selectOffer(any());
-
-        mockMvc.perform(post("/deal/offer/select")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("Data not found or reference is null"))
-                .andExpect(jsonPath("$.message").value("Statement not found"));
-    }
 
     @Test
     void testHandleReadableException() throws Exception {

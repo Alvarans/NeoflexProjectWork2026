@@ -7,4 +7,9 @@ spring:
     password: neoflex
   liquibase:
     enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.xml
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+
+logging:
+  level:
+    liquibase: DEBUG
+    org.springframework.boot.autoconfigure.liquibase: DEBUG

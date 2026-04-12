@@ -7,6 +7,15 @@
            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="20260401-003" author="Alvarans">
+        <preConditions onFail="HALT">
+            <and>
+                <not>
+                    <tableExists tableName="statement"/>
+                </not>
+                <tableExists tableName="client"/>
+                <tableExists tableName="credit"/>
+            </and>
+        </preConditions>
         <createTable tableName="statement">
             <column name="statement_id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>

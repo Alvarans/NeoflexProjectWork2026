@@ -36,7 +36,6 @@ public class CalculatorController implements CalculatorApi {
      */
     @Override
     public ResponseEntity<List<LoanOfferDto>> creditOffers(@Validated @RequestBody LoanStatementRequestDto loanStatementRequestDto) {
-        scoringService.prescore(loanStatementRequestDto);
         return ResponseEntity.ok(calculatorService.generateOffers(loanStatementRequestDto));
     }
 

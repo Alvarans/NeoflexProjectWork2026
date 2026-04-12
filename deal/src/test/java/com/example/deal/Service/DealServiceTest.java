@@ -67,6 +67,14 @@ public class DealServiceTest {
     @Test
     void testSelectOffer_Success() {
         LoanOfferDto loanOfferDto = new LoanOfferDto();
+        loanOfferDto.setStatementId(UUID.randomUUID());
+        loanOfferDto.setTerm(48);
+        loanOfferDto.setTotalAmount(BigDecimal.valueOf(130000));
+        loanOfferDto.setRequestedAmount(BigDecimal.valueOf(100000));
+        loanOfferDto.setIsSalaryClient(Boolean.TRUE);
+        loanOfferDto.setIsInsuranceEnabled(Boolean.TRUE);
+        loanOfferDto.setMonthlyPayment(BigDecimal.valueOf(10000));
+        loanOfferDto.setRate(BigDecimal.valueOf(13));
         dealServiceImpl.selectOffer(loanOfferDto);
         verify(statementServiceImpl).updateStatementWithChoosedOffer(loanOfferDto);
     }
