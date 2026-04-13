@@ -3,6 +3,7 @@ package com.example.deal.handler;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -87,5 +88,12 @@ public class ControllerExceptionHandler {
         body.put("status", HttpStatus.NOT_FOUND.value());
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(PessimisticLockingFailureException.class)
+    public ResponseEntity<String> handleLockingFailure(PessimisticLockingFailureException ex) {
+        return ResponseEntity
+                .status(HttpStatus.LOCKED)
+                .body("Ресурс временно недоступен: попробуйте позже");
     }
 }
