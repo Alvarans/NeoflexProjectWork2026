@@ -28,6 +28,7 @@ public class StatementServiceImpl implements StatementService {
             throw new IllegalArgumentException("Your request data is null");
         }
         prescoreService.prescore(loanStatementRequestDto);
+        log.info("LoanStatementRequestDto goes to offer creation prescored");
         return dealClientService.createOffers(loanStatementRequestDto);
     }
 

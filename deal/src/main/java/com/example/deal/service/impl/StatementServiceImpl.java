@@ -1,7 +1,7 @@
 package com.example.deal.service.impl;
 
-import com.example.deal.dto.ApplicationStatus;
 import com.example.api.common.dto.LoanOfferDto;
+import com.example.deal.dto.ApplicationStatus;
 import com.example.deal.entity.StatementEntity;
 import com.example.deal.repository.StatementRepository;
 import com.example.deal.service.ClientService;
