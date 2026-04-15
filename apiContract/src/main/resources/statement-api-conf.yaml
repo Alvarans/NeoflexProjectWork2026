@@ -1,0 +1,45 @@
+openapi: 3.0.3
+info:
+  title: Statement Service API
+  version: 1.0.0
+  description: API для прескоринга и управления кредитными предложениями.
+
+paths:
+  /statement:
+    post:
+      summary: Прескоринг и расчет условий кредита
+      operationId: createStatement
+      tags:
+        - Statement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './common-components.yaml#/components/schemas/LoanStatementRequestDto'
+      responses:
+        '200':
+          description: Список из 4 предложений, отсортированных от худшего к лучшему
+          content:
+            application/json:
+              schema:
+                type: array
+                nullable: true
+                items:
+                  $ref: './common-components.yaml#/components/schemas/LoanOfferDto'
+
+  /statement/offer:
+    post:
+      summary: Выбор одного из предложений
+      operationId: selectOffer
+      tags:
+        - Statement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './common-components.yaml#/components/schemas/LoanOfferDto'
+      responses:
+        '200':
+          description: Предложение успешно выбрано

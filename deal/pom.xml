@@ -8,10 +8,10 @@
         <version>0.0.1-SNAPSHOT</version> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.neoflex</groupId>
-    <artifactId>Deal</artifactId>
+    <artifactId>deal</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Deal</name>
-    <description>Deal</description>
+    <name>deal</name>
+    <description>deal</description>
     <url/>
     <licenses>
         <license/>
@@ -41,7 +41,12 @@
         </dependency>
         <dependency>
             <groupId>com.example</groupId>
-            <artifactId>ApiContract</artifactId>
+            <artifactId>apiContract</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>database</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -49,7 +54,6 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
-
     </dependencies>
 
     <build>

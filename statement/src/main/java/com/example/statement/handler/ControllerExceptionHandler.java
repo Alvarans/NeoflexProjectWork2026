@@ -1,9 +1,7 @@
-package com.example.deal.handler;
+package com.example.statement.handler;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -15,13 +13,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-
 public class ControllerExceptionHandler {
     Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
@@ -80,20 +75,15 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<>(body, ex.getStatusCode());
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleEntityNotFoundException(EntityNotFoundException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        body.put("status", HttpStatus.NOT_FOUND.value());
-
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(PessimisticLockingFailureException.class)
-    public ResponseEntity<String> handleLockingFailure(PessimisticLockingFailureException ex) {
+    @ExceptionHandler(feign.FeignException.class)
+    public ResponseEntity<Map<String, Object>> handleFeignException(feign.FeignException ex) {
+        Map<String, Object> body = new HashMap<>();
+        String responseBody = ex.contentUTF8();
+        body.put("error", "Error from External Service");
+        body.put("message", responseBody.isEmpty() ? ex.getMessage() : responseBody);
+        body.put("status", ex.status());
         return ResponseEntity
-                .status(HttpStatus.LOCKED)
-                .body("Ресурс временно недоступен: попробуйте позже");
+                .status(ex.status() > 0 ? ex.status() : 500)
+                .body(body);
     }
 }

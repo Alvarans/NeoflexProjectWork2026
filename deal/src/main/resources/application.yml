@@ -5,6 +5,9 @@ spring:
     url: jdbc:postgresql://localhost:5432/neoflexbd
     username: neoflexuser
     password: neoflex
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
   jpa:
     hibernate:
       ddl-auto: none
@@ -16,6 +19,3 @@ services:
 server:
   port: 8011
 
-logging:
-  level:
-    liquibase: DEBUG

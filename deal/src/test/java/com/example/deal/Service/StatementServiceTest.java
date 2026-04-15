@@ -58,7 +58,7 @@ public class StatementServiceTest {
         LoanOfferDto loanOfferDto = new LoanOfferDto();
         loanOfferDto.setStatementId(statementId);
 
-        when(statementRepository.findByStatementId(statementId)).thenReturn(Optional.of(statementEntity));
+        when(statementRepository.findByStatementIdForUpdate(statementId)).thenReturn(Optional.of(statementEntity));
 
         statementServiceImpl.updateStatementWithChoosedOffer(loanOfferDto);
 
@@ -73,12 +73,12 @@ public class StatementServiceTest {
         LoanOfferDto loanOfferDto = new LoanOfferDto();
         loanOfferDto.setStatementId(statementId);
 
-        when(statementRepository.findByStatementId(statementId)).thenReturn(null);
+        when(statementRepository.findByStatementIdForUpdate(statementId)).thenReturn(null);
 
         Exception exception = assertThrows(NullPointerException.class, () -> statementServiceImpl.updateStatementWithChoosedOffer(loanOfferDto));
 
         assertTrue(exception.getMessage() == null || exception.getMessage().contains("null"));
-        verify(statementRepository, times(1)).findByStatementId(statementId);
+        verify(statementRepository, times(1)).findByStatementIdForUpdate(statementId);
         verify(statementRepository, never()).save(any(StatementEntity.class));
     }
 

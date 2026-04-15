@@ -1,12 +1,13 @@
 package com.example.deal.service.impl;
 
-import com.example.deal.dto.ApplicationStatus;
 import com.example.api.common.dto.LoanOfferDto;
+import com.example.deal.dto.ApplicationStatus;
 import com.example.deal.entity.StatementEntity;
 import com.example.deal.repository.StatementRepository;
 import com.example.deal.service.ClientService;
 import com.example.deal.service.StatementService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -62,12 +63,18 @@ public class StatementServiceImpl implements StatementService {
         return statementRepository.findByStatementId(statementId).orElseThrow(() -> new EntityNotFoundException("Can't find statement with such id"));
     }
 
+    public StatementEntity getStatementForUpdate(UUID statementId){
+        return statementRepository.findByStatementIdForUpdate(statementId)
+                .orElseThrow(() -> new EntityNotFoundException("Can't find statement with such id"));
+    }
+
     /**
      * Обновление статуса заявки после того, как клиент выбрал предложение по кредиту
      * @param loanOfferDto Выбранное предложение
      */
+    @Transactional
     public void updateStatementWithChoosedOffer(LoanOfferDto loanOfferDto){
-        StatementEntity statementEntity = getStatement(loanOfferDto.getStatementId());
+        StatementEntity statementEntity = getStatementForUpdate(loanOfferDto.getStatementId());
         statementEntity.setAppliedOffer(loanOfferDto);
         statementEntity.updateStatus(ApplicationStatus.APPROVED);
         log.info("Updated statement with loan offer: {}", loanOfferDto);

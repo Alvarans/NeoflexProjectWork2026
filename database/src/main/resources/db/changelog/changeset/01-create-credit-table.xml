@@ -7,6 +7,11 @@
            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="20260401-001" author="Alvarans">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="credit"/>
+            </not>
+        </preConditions>
         <createTable tableName="credit">
             <column name="credit_id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>

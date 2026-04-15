@@ -70,6 +70,14 @@ components:
 
     LoanOfferDto:
       type: object
+      required:
+        - statementId
+        - requestedAmount
+        - totalAmount
+        - term
+        - monthlyPayment
+        - isInsuranceEnabled
+        - isSalaryClient
       properties:
         statementId:
           type: string

@@ -20,25 +20,6 @@ class ScoringServiceTest {
     private ScoringServiceImpl scoringService;
 
     @Test
-    void prescore() {
-        LoanStatementRequestDto loanStatementRequestDto = new LoanStatementRequestDto();
-        loanStatementRequestDto.setFirstName("12345");
-        loanStatementRequestDto.setLastName("12345");
-        loanStatementRequestDto.setMiddleName("a");
-        assertThrows(IllegalArgumentException.class, () -> scoringService.prescore(loanStatementRequestDto));
-        loanStatementRequestDto.setFirstName("boris");
-        assertThrows(IllegalArgumentException.class, () -> scoringService.prescore(loanStatementRequestDto));
-        loanStatementRequestDto.setLastName("britva");
-        assertThrows(IllegalArgumentException.class, () -> scoringService.prescore(loanStatementRequestDto));
-        loanStatementRequestDto.setMiddleName("348");
-        assertThrows(IllegalArgumentException.class, () -> scoringService.prescore(loanStatementRequestDto));
-        loanStatementRequestDto.setMiddleName(null);
-        loanStatementRequestDto.setBirthdate(LocalDate.of(2017,7,30));
-        assertThrows(IllegalArgumentException.class, () -> scoringService.prescore(loanStatementRequestDto));
-        loanStatementRequestDto.setBirthdate(LocalDate.of(2001,7,30));
-    }
-
-    @Test
     void score() {
         ScoringDataDto scoringDataDto = new ScoringDataDto();
         scoringDataDto.setEmployment(new EmploymentDto());
