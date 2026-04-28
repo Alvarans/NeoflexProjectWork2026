@@ -9,6 +9,8 @@ import com.example.deal.dto.FinishRegistrationRequestDto;
 import com.example.deal.entity.StatementEntity;
 import com.example.deal.mapping.ScoringDataMapper;
 import com.example.deal.service.*;
+import com.example.dossier.dto.EmailMessage;
+import com.example.dossier.dto.EmailTheme;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ public class DealServiceImpl implements DealService {
     private final CreditService creditService;
     private final CalculatorRestClientService calculatorRestClientService;
     private final ScoringDataMapper scoringDataMapper;
+    private final KafkaProducerService kafkaProducerService;
 
     /**
      * Формирование данных для подсчёта кредита и дополнение информации о клиенте
@@ -39,31 +42,13 @@ public class DealServiceImpl implements DealService {
      */
     public void calculateCredit(UUID statementId, FinishRegistrationRequestDto finishRegistrationRequestDto) {
         //Проверка пришедших данных для заполнения
-        if ((finishRegistrationRequestDto == null)||(!checkFinishRegistrationDtoFullfiling(finishRegistrationRequestDto))) {
+        if ((finishRegistrationRequestDto == null) || (!checkFinishRegistrationDtoFullfiling(finishRegistrationRequestDto))) {
             throw new IllegalArgumentException("Your finish registration requiest is not complete");
         }
         StatementEntity statementEntity = statementService.getStatement(statementId);
         //Наполнение данных для подсчёта с помощью заявки и доп.информации
-        /*ScoringDataDto scoringDataDto = new ScoringDataDto();
-        scoringDataDto.setAmount(statementEntity.getAppliedOffer().getTotalAmount());
-        scoringDataDto.setTerm(statementEntity.getAppliedOffer().getTerm());
-        scoringDataDto.setFirstName(statementEntity.getClient().getFirstName());
-        scoringDataDto.setLastName(statementEntity.getClient().getLastName());
-        scoringDataDto.setMiddleName(statementEntity.getClient().getMiddleName());
-        scoringDataDto.setGender(finishRegistrationRequestDto.getGender());
-        scoringDataDto.setBirthdate(statementEntity.getClient().getBirthDate());
-        scoringDataDto.setPassportSeries(statementEntity.getClient().getPassport().getSeries());
-        scoringDataDto.setPassportNumber(statementEntity.getClient().getPassport().getNumber());
-        scoringDataDto.setPassportIssueDate(finishRegistrationRequestDto.getPassportIssueDate());
-        scoringDataDto.setPassportIssueBranch(finishRegistrationRequestDto.getPassportIssueBrach());
-        scoringDataDto.setMaritalStatus(finishRegistrationRequestDto.getMaritalStatus());
-        scoringDataDto.setDependentAmount(finishRegistrationRequestDto.getDependentAmount());
-        scoringDataDto.setEmployment(finishRegistrationRequestDto.getEmployment());
-        scoringDataDto.setAccountNumber(finishRegistrationRequestDto.getAccountNumber());
-        scoringDataDto.setIsInsuranceEnabled(statementEntity.getAppliedOffer().getIsInsuranceEnabled());
-        scoringDataDto.setIsSalaryClient(statementEntity.getAppliedOffer().getIsSalaryClient());*/
         ScoringDataDto scoringDataDto = scoringDataMapper.toScoringDataDto(statementEntity, finishRegistrationRequestDto);
-        log.info("ScoringDataDto fullfiled for credit calculation: {}", scoringDataDto);
+        log.info("ScoringDataDto fulfilled for credit calculation: {}", scoringDataDto);
         CreditDto creditDto = calculatorRestClientService.calculateCredit(scoringDataDto);
         log.info("Credit is calculated: {}", creditDto);
         log.info("Schedule size in DTO: {}", creditDto.getPaymentSchedule().size());
@@ -73,6 +58,11 @@ public class DealServiceImpl implements DealService {
         //Дополнение информации о клиенте
         log.info("Client information updated after credit calculation with additional info {}", finishRegistrationRequestDto);
         clientService.updateClientAfterCreditCalculation(statementEntity.getClient().getClientId(), finishRegistrationRequestDto);
+        log.info("Sending message about creating documents");
+        kafkaProducerService.send("create-documents",
+                makeEmail(statementId, statementEntity.getClient().getEmail(), EmailTheme.CREATE_DOCUMENTS));
+        log.info("Status updating to prepare_documents");
+        statementService.updateStatementStatus(statementId, ApplicationStatus.PREPARE_DOCUMENTS);
     }
 
     /**
@@ -105,7 +95,55 @@ public class DealServiceImpl implements DealService {
     }
 
     /**
+     * Отправка документов на заполнение
+     *
+     * @param statementId Идентификатор заявки
+     */
+    public void sendDocuments(UUID statementId) {
+        statementService.updateStatementStatus(statementId, ApplicationStatus.DOCUMENT_CREATED);
+        String clientEmail = statementService.getClientEmailFromStatementByStatementId(statementId);
+        kafkaProducerService.send("send-documents",
+                makeEmail(statementId, clientEmail, EmailTheme.SEND_DOCUMENTS));
+    }
+
+    /**
+     * Отправка документов на подпись
+     *
+     * @param statementId Идентификатор заявки
+     */
+    public void signDocuments(UUID statementId) {
+        String clientEmail = statementService.getClientEmailFromStatementByStatementId(statementId);
+        String codeImitation = UUID.randomUUID().toString();
+        statementService.signStatementWithSignCode(statementId, codeImitation);
+        EmailMessage emailMessage = makeEmail(statementId, clientEmail, EmailTheme.SEND_SES);
+        emailMessage.setText(codeImitation);
+        kafkaProducerService.send("send-ses", emailMessage);
+    }
+
+    /**
+     * Проверка подписи
+     *
+     * @param statementId Идентификатор заявки
+     * @param code        проверочный код
+     * @return true, если проверка прошла успешно и false в ином случае
+     */
+    public boolean documentCodePass(UUID statementId, String code) {
+        StatementEntity statementEntity = statementService.getStatement(statementId);
+        if (statementEntity.getSesCode().equals(code)) {
+            statementService.updateStatementStatus(statementId, ApplicationStatus.CREDIT_ISSUED);
+            kafkaProducerService.send("credit-issued", makeEmail(statementId, statementEntity.getClient().getEmail(), EmailTheme.CREDIT_ISSUED));
+            return true;
+        } else {
+            log.info("Document code passed to the client is incorrect");
+            //Вообще, отказ от сделки должен происходить иначе
+            kafkaProducerService.send("statement-denied", makeEmail(statementId, statementEntity.getClient().getEmail(), EmailTheme.STATEMENT_DENIED));
+            return false;
+        }
+    }
+
+    /**
      * Проверка данных для завершения регистрации на наличие
+     *
      * @param finishRegistrationRequestDto Данные для завершения регистрации
      * @return true, если все данные имеются, или false, если какое-либо поле == null
      */
@@ -131,7 +169,7 @@ public class DealServiceImpl implements DealService {
             return false;
         }
         if (finishRegistrationRequestDto.getPassportIssueBrach() == null) {
-            log.error("Passport issue brach in finish registration request dto is empty");
+            log.error("Passport issue branch in finish registration request dto is empty");
             return false;
         }
         if (finishRegistrationRequestDto.getPassportIssueDate() == null) {
@@ -139,5 +177,21 @@ public class DealServiceImpl implements DealService {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Формирование сообщения для отправления
+     *
+     * @param statementId Идентификатор заявки
+     * @param email       Электронная почта клиента
+     * @param emailTheme  Тема уведомления
+     * @return Сформированное сообщение для отправки
+     */
+    private EmailMessage makeEmail(UUID statementId, String email, EmailTheme emailTheme) {
+        EmailMessage emailMessage = new EmailMessage();
+        emailMessage.setAddress(email);
+        emailMessage.setStatementId(statementId);
+        emailMessage.setTheme(emailTheme);
+        return emailMessage;
     }
 }
