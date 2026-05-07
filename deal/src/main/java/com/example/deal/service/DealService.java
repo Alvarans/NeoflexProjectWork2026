@@ -18,6 +18,7 @@ public interface DealService {
      * @param finishRegistrationRequestDto Дополнительная информация о клиенте для создания кредита
      */
     void calculateCredit(UUID statementId, FinishRegistrationRequestDto finishRegistrationRequestDto);
+
     /**
      * Создание заявки на кредит. Предоставляет 4 предложения по кредиту
      *
@@ -25,6 +26,7 @@ public interface DealService {
      * @return Лист из 4 кредитных предложений
      */
     List<LoanOfferDto> makeADealStatement(LoanStatementRequestDto loanStatementRequestDto);
+
     /**
      * Выбор предложенного оффера
      *
@@ -32,4 +34,26 @@ public interface DealService {
      */
     void selectOffer(LoanOfferDto loanOfferDto);
 
+    /**
+     * Отправка документов на заполнение
+     *
+     * @param statementId Идентификатор заявки
+     */
+    void sendDocuments(UUID statementId);
+
+    /**
+     * Отправка документов на подпись с кодом подтверждения
+     *
+     * @param statementId Идентификатор заявки
+     */
+    void signDocuments(UUID statementId);
+
+    /**
+     * Проверка кода подтверждения
+     *
+     * @param statementId Идентификатор заявки
+     * @param code        проверочный код
+     * @return Прошёл ли код проверку
+     */
+    boolean documentCodePass(UUID statementId, String code);
 }

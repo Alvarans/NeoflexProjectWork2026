@@ -5,6 +5,7 @@ import com.example.api.common.dto.LoanOfferDto;
 import com.example.deal.entity.ClientEntity;
 import com.example.deal.entity.StatementEntity;
 import com.example.deal.repository.StatementRepository;
+import com.example.deal.service.KafkaProducerService;
 import com.example.deal.service.impl.ClientServiceImpl;
 import com.example.deal.service.impl.StatementServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,8 @@ public class StatementServiceTest {
     private StatementRepository statementRepository;
     @Mock
     private ClientServiceImpl clientServiceImpl;
+    @Mock
+    private KafkaProducerService kafkaProducerService;
     @InjectMocks
     private StatementServiceImpl statementServiceImpl;
 
@@ -54,7 +57,11 @@ public class StatementServiceTest {
     @Test
     void testUpdateStatementWithChoosedOffer_Success() {
         UUID statementId = UUID.randomUUID();
+        ClientEntity client = new ClientEntity();
+        client.setEmail("test@example.com");
         StatementEntity statementEntity = new StatementEntity();
+        statementEntity.setStatementId(statementId);
+        statementEntity.setClient(client);
         LoanOfferDto loanOfferDto = new LoanOfferDto();
         loanOfferDto.setStatementId(statementId);
 

@@ -67,6 +67,71 @@ paths:
         '200':
           description: Кредит успешно рассчитан и сохранен
 
+  /deal/document/{statementId}/send:
+    post:
+      summary: Запрос на отправку документов
+      operationId: sendDocuments
+      tags:
+        - Deal
+        - Documents
+      parameters:
+        - name: statementId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Документы отправлены
+
+  /deal/document/{statementId}/sign:
+    post:
+      summary: Запрос на подписание документов
+      operationId: signDocuments
+      tags:
+        - Deal
+        - Documents
+      parameters:
+        - name: statementId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Сформирован запрос на подписание
+
+  /deal/document/{statementId}/code:
+    post:
+      summary: Подписание документов (ввод кода)
+      operationId: documentCodePass
+      tags:
+        - Deal
+        - Documents
+      parameters:
+        - name: statementId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sescode:
+                  type: string
+              required:
+                - sescode
+      responses:
+        200:
+          description: Документы успешно подписаны
+
 components:
   schemas:
     FinishRegistrationRequestDto:

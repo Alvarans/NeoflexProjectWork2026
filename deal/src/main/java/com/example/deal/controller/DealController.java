@@ -1,6 +1,7 @@
 package com.example.deal.controller;
 
 import com.example.deal.api.DealApi;
+import com.example.deal.dto.DocumentCodePassRequest;
 import com.example.deal.dto.FinishRegistrationRequestDto;
 import com.example.api.common.dto.LoanOfferDto;
 import com.example.api.common.dto.LoanStatementRequestDto;
@@ -48,6 +49,22 @@ public class DealController implements DealApi {
     }
 
     /**
+     * Проверка проверочного кода
+     * @param statementId  (required) Идентификационный номер заявки
+     * @param sesCode  (required) Код подтверждения
+     * @return 200
+     */
+    @Override
+    public ResponseEntity<Void> documentCodePass(UUID statementId, DocumentCodePassRequest sesCode) {
+        if (dealService.documentCodePass(statementId, sesCode.getSescode()))
+            return ResponseEntity.ok().build();
+        else {
+            log.error("Код подтверждения неверен");
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
      * Выбор предложения из представленных
      * @param loanOfferDto  (required) Выбранное предложение
      * @return Код успешного выполнения запроса. По заданию возвращать ничего не нужно
@@ -55,6 +72,28 @@ public class DealController implements DealApi {
     @Override
     public ResponseEntity<Void> selectOffer(LoanOfferDto loanOfferDto) {
         dealService.selectOffer(loanOfferDto);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Отправка документов клиенту
+     * @param statementId  (required) Идентификационный номер заявки
+     * @return 200
+     */
+    @Override
+    public ResponseEntity<Void> sendDocuments(UUID statementId) {
+        dealService.sendDocuments(statementId);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Подписание документов клиентом
+     * @param statementId  (required) Идентификационный номер заявки
+     * @return 200
+     */
+    @Override
+    public ResponseEntity<Void> signDocuments(UUID statementId) {
+        dealService.signDocuments(statementId);
         return ResponseEntity.ok().build();
     }
 }

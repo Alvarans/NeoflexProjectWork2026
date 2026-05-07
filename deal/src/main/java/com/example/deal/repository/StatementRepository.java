@@ -25,4 +25,7 @@ public interface StatementRepository extends JpaRepository<StatementEntity, UUID
     Optional<StatementEntity> findByStatementIdForUpdate(
             @Param("statementId") UUID statementId
     );
+
+    @Query("SELECT s.client.email FROM StatementEntity s WHERE s.statementId = :id")
+    Optional<String> findClientEmailByStatementId(@Param("id") UUID id);
 }

@@ -7,11 +7,11 @@
         <artifactId>neoflex-project-work</artifactId>
         <version>0.0.1-SNAPSHOT</version> <!-- lookup parent from repository -->
     </parent>
-    <groupId>org.neoflex</groupId>
-    <artifactId>deal</artifactId>
+    <groupId>com.example</groupId>
+    <artifactId>dossier</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>deal</name>
-    <description>deal</description>
+    <name>dossier</name>
+    <description>dossier</description>
     <url/>
     <licenses>
         <license/>
@@ -29,50 +29,33 @@
         <java.version>21</java.version>
     </properties>
     <dependencies>
-       <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <dependency>
             <groupId>com.example</groupId>
             <artifactId>apiContract</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>database</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>dossier</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
-        </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.springframework.kafka/spring-kafka -->
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
             <version>4.0.4</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-kafka</artifactId>
         </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+            <version>4.1.0-M4</version>
+            <scope>compile</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -144,24 +127,10 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${maven.multiModuleProjectDirectory}/apiContract/src/main/resources/deal-api-conf.yaml</inputSpec>
+                            <inputSpec>${maven.multiModuleProjectDirectory}/apiContract/src/main/resources/dossier-api-conf.yaml</inputSpec>
                             <output>${project.build.directory}/generated-sources/openapi</output>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
-                            <importMappings>
-                                <importMapping>LoanStatementRequestDto=com.example.api.common.dto.LoanStatementRequestDto</importMapping>
-                                <importMapping>LoanOfferDto=com.example.api.common.dto.LoanOfferDto</importMapping>
-                                <importMapping>EmploymentDto=com.example.api.common.dto.EmploymentDto</importMapping>
-                                <importMapping>Genders=com.example.api.common.dto.Genders</importMapping>
-                                <importMapping>MaritalStatus=com.example.api.common.dto.MaritalStatus</importMapping>
-                            </importMappings>
-                            <typeMappings>
-                                <typeMapping>LoanStatementRequestDto=com.example.api.common.dto.LoanStatementRequestDto</typeMapping>
-                                <typeMapping>LoanOfferDto=com.example.api.common.dto.LoanOfferDto</typeMapping>
-                                <typeMapping>EmploymentDto=com.example.api.common.dto.EmploymentDto</typeMapping>
-                                <typeMapping>Genders=com.example.api.common.dto.Genders</typeMapping>
-                                <typeMapping>MaritalStatus=com.example.api.common.dto.MaritalStatus</typeMapping>
-                            </typeMappings>
                             <configOptions>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useSpringBoot3>true</useSpringBoot3>
@@ -178,8 +147,8 @@
                                 <generatedConstructorWithRequiredArgs>false</generatedConstructorWithRequiredArgs>
                                 <useTags>true</useTags>
                                 <skipDefaultInterface>true</skipDefaultInterface>
-                                <apiPackage>com.example.deal.api</apiPackage>
-                                <modelPackage>com.example.deal.dto</modelPackage>
+                                <apiPackage>com.example.dossier.api</apiPackage>
+                                <modelPackage>com.example.dossier.dto</modelPackage>
                                 <generateBuilders>true</generateBuilders>
                                 <serializableModel>true</serializableModel>
                             </configOptions>
@@ -201,4 +170,3 @@
     </build>
 
 </project>
-

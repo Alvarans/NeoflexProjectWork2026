@@ -6,6 +6,7 @@ import com.example.deal.dto.Passport;
 import com.example.deal.entity.ClientEntity;
 import com.example.deal.entity.StatementEntity;
 import com.example.deal.mapping.ScoringDataMapper;
+import com.example.deal.service.KafkaProducerService;
 import com.example.deal.service.impl.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +36,8 @@ public class DealServiceTest {
     private CalculatorRestClientServiceImpl calculatorRestClientServiceImpl;
     @Mock
     private ScoringDataMapper scoringDataMapper;
+    @Mock
+    private KafkaProducerService kafkaProducerService;
     @InjectMocks
     private DealServiceImpl dealServiceImpl;
 
