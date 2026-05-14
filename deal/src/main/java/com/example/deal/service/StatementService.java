@@ -4,6 +4,7 @@ import com.example.api.common.dto.LoanOfferDto;
 import com.example.deal.dto.ApplicationStatus;
 import com.example.deal.entity.StatementEntity;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -71,4 +72,6 @@ public interface StatementService {
      * @param applicationStatus Новый статус сделки
      */
     void updateStatementStatus(UUID statementId, ApplicationStatus applicationStatus);
+
+    List<StatementEntity> getAllStatements();
 }

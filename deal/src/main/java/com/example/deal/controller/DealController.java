@@ -5,6 +5,7 @@ import com.example.deal.dto.DocumentCodePassRequest;
 import com.example.deal.dto.FinishRegistrationRequestDto;
 import com.example.api.common.dto.LoanOfferDto;
 import com.example.api.common.dto.LoanStatementRequestDto;
+import com.example.deal.dto.StatementDto;
 import com.example.deal.service.DealService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +63,16 @@ public class DealController implements DealApi {
             log.error("Код подтверждения неверен");
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @Override
+    public ResponseEntity<List<StatementDto>> getAllStatements() {
+        return ResponseEntity.ok(dealService.getAllStatements());
+    }
+
+    @Override
+    public ResponseEntity<StatementDto> getStatementById(UUID statementId) {
+        return ResponseEntity.ok(dealService.getStatement(statementId));
     }
 
     /**
