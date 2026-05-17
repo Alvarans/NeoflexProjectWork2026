@@ -1,9 +1,7 @@
 package com.example.apigateway;
 
-import com.example.api.common.dto.CreditDto;
 import com.example.api.common.dto.LoanOfferDto;
 import com.example.api.common.dto.LoanStatementRequestDto;
-import com.example.api.common.dto.ScoringDataDto;
 import com.example.apigateway.controller.ApiGatewayController;
 import com.example.apigateway.dto.DocumentCodePassRequest;
 import com.example.apigateway.dto.FinishRegistrationRequestDto;
@@ -62,31 +60,6 @@ class ApiGatewayControllerTest {
     }
 
     @Test
-    void createDealStatement_shouldReturnOffers() {
-
-        LoanStatementRequestDto request =
-                new LoanStatementRequestDto();
-
-        List<LoanOfferDto> offers = List.of(
-                new LoanOfferDto()
-        );
-
-        ResponseEntity<List<LoanOfferDto>> expected =
-                ResponseEntity.ok(offers);
-
-        when(apiGatewayService.createDealStatement(request))
-                .thenReturn(expected);
-
-        ResponseEntity<List<LoanOfferDto>> actual =
-                controller.createDealStatement(request);
-
-        assertEquals(expected, actual);
-
-        verify(apiGatewayService)
-                .createDealStatement(request);
-    }
-
-    @Test
     void createStatement_shouldReturnOffers() {
 
         LoanStatementRequestDto request =
@@ -109,54 +82,6 @@ class ApiGatewayControllerTest {
 
         verify(apiGatewayService)
                 .createStatement(request);
-    }
-
-    @Test
-    void creditCalculation_shouldReturnCreditDto() {
-
-        ScoringDataDto request =
-                new ScoringDataDto();
-
-        CreditDto creditDto = new CreditDto();
-
-        ResponseEntity<CreditDto> expected =
-                ResponseEntity.ok(creditDto);
-
-        when(apiGatewayService.creditCalculation(request))
-                .thenReturn(expected);
-
-        ResponseEntity<CreditDto> actual =
-                controller.creditCalculation(request);
-
-        assertEquals(expected, actual);
-
-        verify(apiGatewayService)
-                .creditCalculation(request);
-    }
-
-    @Test
-    void creditOffers_shouldReturnOffers() {
-
-        LoanStatementRequestDto request =
-                new LoanStatementRequestDto();
-
-        List<LoanOfferDto> offers = List.of(
-                new LoanOfferDto()
-        );
-
-        ResponseEntity<List<LoanOfferDto>> expected =
-                ResponseEntity.ok(offers);
-
-        when(apiGatewayService.getCreditOffers(request))
-                .thenReturn(expected);
-
-        ResponseEntity<List<LoanOfferDto>> actual =
-                controller.creditOffers(request);
-
-        assertEquals(expected, actual);
-
-        verify(apiGatewayService)
-                .getCreditOffers(request);
     }
 
     @Test
@@ -220,26 +145,6 @@ class ApiGatewayControllerTest {
 
         verify(apiGatewayService)
                 .getStatementById(statementId);
-    }
-
-    @Test
-    void selectDealOffer_shouldReturnOk() {
-
-        LoanOfferDto request = new LoanOfferDto();
-
-        ResponseEntity<Void> expected =
-                ResponseEntity.ok().build();
-
-        when(apiGatewayService.selectDealOffer(request))
-                .thenReturn(expected);
-
-        ResponseEntity<Void> actual =
-                controller.selectDealOffer(request);
-
-        assertEquals(expected, actual);
-
-        verify(apiGatewayService)
-                .selectDealOffer(request);
     }
 
     @Test

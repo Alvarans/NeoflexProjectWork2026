@@ -1,9 +1,7 @@
 package com.example.apigateway.controller;
 
-import com.example.api.common.dto.CreditDto;
 import com.example.api.common.dto.LoanOfferDto;
 import com.example.api.common.dto.LoanStatementRequestDto;
-import com.example.api.common.dto.ScoringDataDto;
 import com.example.apigateway.api.GatewayApi;
 import com.example.apigateway.dto.DocumentCodePassRequest;
 import com.example.apigateway.dto.FinishRegistrationRequestDto;
@@ -38,16 +36,6 @@ public class ApiGatewayController implements GatewayApi {
     }
 
     /**
-     * Формирование заявки на получение кредита из сервиса Deal
-     * @param loanStatementRequestDto Первичные данные о клиенте (required)
-     * @return Список из 4 кредитных предложений
-     */
-    @Override
-    public ResponseEntity<List<LoanOfferDto>> createDealStatement(LoanStatementRequestDto loanStatementRequestDto) {
-        return apiGatewayService.createDealStatement(loanStatementRequestDto);
-    }
-
-    /**
      * Формирование заявки на получение кредита из сервиса Statement
      * @param loanStatementRequestDto Первичные данные о клиенте (required)
      * @return Список из 4 кредитных предложений
@@ -55,26 +43,6 @@ public class ApiGatewayController implements GatewayApi {
     @Override
     public ResponseEntity<List<LoanOfferDto>> createStatement(LoanStatementRequestDto loanStatementRequestDto) {
         return apiGatewayService.createStatement(loanStatementRequestDto);
-    }
-
-    /**
-     * Подсчёт кредита для клиента из сервиса calculator
-     * @param scoringDataDto Информация о клиенте и запрашиваемом кредите (required)
-     * @return Информация по кредиту
-     */
-    @Override
-    public ResponseEntity<CreditDto> creditCalculation(ScoringDataDto scoringDataDto) {
-        return apiGatewayService.creditCalculation(scoringDataDto);
-    }
-
-    /**
-     * Формирование заявки на получение кредита из сервиса Calculator
-     * @param loanStatementRequestDto Первичные данные о клиенте (required)
-     * @return Список из 4 кредитных предложений
-     */
-    @Override
-    public ResponseEntity<List<LoanOfferDto>> creditOffers(LoanStatementRequestDto loanStatementRequestDto) {
-        return apiGatewayService.getCreditOffers(loanStatementRequestDto);
     }
 
     /**
@@ -105,16 +73,6 @@ public class ApiGatewayController implements GatewayApi {
     @Override
     public ResponseEntity<StatementDto> getStatementById(UUID statementId) {
         return apiGatewayService.getStatementById(statementId);
-    }
-
-    /**
-     * Выбор одного кредитного предложения из предлагаемых в сервисе Deal
-     * @param loanOfferDto Выбранное кредитное предложение (required)
-     * @return 200
-     */
-    @Override
-    public ResponseEntity<Void> selectDealOffer(LoanOfferDto loanOfferDto) {
-        return apiGatewayService.selectDealOffer(loanOfferDto);
     }
 
     /**

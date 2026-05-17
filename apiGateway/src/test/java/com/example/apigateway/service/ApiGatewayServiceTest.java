@@ -1,9 +1,7 @@
 package com.example.apigateway.service;
 
-import com.example.api.common.dto.CreditDto;
 import com.example.api.common.dto.LoanOfferDto;
 import com.example.api.common.dto.LoanStatementRequestDto;
-import com.example.api.common.dto.ScoringDataDto;
 import com.example.apigateway.dto.DocumentCodePassRequest;
 import com.example.apigateway.dto.FinishRegistrationRequestDto;
 import com.example.apigateway.dto.StatementDto;
@@ -47,18 +45,6 @@ public class ApiGatewayServiceTest {
     }
 
     @Test
-    void createDealStatement_shouldCallDealService() {
-        LoanStatementRequestDto dto = new LoanStatementRequestDto();
-        List<LoanOfferDto> expectedOffers = List.of(new LoanOfferDto());
-        when(dealRestClientService.createDealStatement(dto)).thenReturn(ResponseEntity.ok(expectedOffers));
-
-        ResponseEntity<List<LoanOfferDto>> response = apiGatewayService.createDealStatement(dto);
-
-        assertEquals(expectedOffers, response.getBody());
-        verify(dealRestClientService).createDealStatement(dto);
-    }
-
-    @Test
     void createStatement_shouldCallStatementService() {
         LoanStatementRequestDto dto = new LoanStatementRequestDto();
         when(statementRestClientService.createStatement(dto)).thenReturn(ResponseEntity.ok(List.of()));
@@ -66,28 +52,6 @@ public class ApiGatewayServiceTest {
         apiGatewayService.createStatement(dto);
 
         verify(statementRestClientService).createStatement(dto);
-    }
-
-    @Test
-    void creditCalculation_shouldCallCalculatorService() {
-        ScoringDataDto dto = new ScoringDataDto();
-        CreditDto expected = new CreditDto();
-        when(calculatorRestClientService.creditCalculation(dto)).thenReturn(ResponseEntity.ok(expected));
-
-        ResponseEntity<CreditDto> response = apiGatewayService.creditCalculation(dto);
-
-        assertEquals(expected, response.getBody());
-        verify(calculatorRestClientService).creditCalculation(dto);
-    }
-
-    @Test
-    void getCreditOffers_shouldCallCalculatorService() {
-        LoanStatementRequestDto dto = new LoanStatementRequestDto();
-        when(calculatorRestClientService.creditOffers(dto)).thenReturn(ResponseEntity.ok(List.of()));
-
-        apiGatewayService.getCreditOffers(dto);
-
-        verify(calculatorRestClientService).creditOffers(dto);
     }
 
     @Test
@@ -99,16 +63,6 @@ public class ApiGatewayServiceTest {
         apiGatewayService.documentCodePass(id, request);
 
         verify(dealRestClientService).documentCodePass(id, request);
-    }
-
-    @Test
-    void selectDealOffer_shouldCallDealService() {
-        LoanOfferDto dto = new LoanOfferDto();
-        when(dealRestClientService.selectDealOffer(dto)).thenReturn(ResponseEntity.ok().build());
-
-        apiGatewayService.selectDealOffer(dto);
-
-        verify(dealRestClientService).selectDealOffer(dto);
     }
 
     @Test

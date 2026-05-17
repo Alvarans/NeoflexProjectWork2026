@@ -1,9 +1,7 @@
 package com.example.apigateway.service;
 
-import com.example.api.common.dto.CreditDto;
 import com.example.api.common.dto.LoanOfferDto;
 import com.example.api.common.dto.LoanStatementRequestDto;
-import com.example.api.common.dto.ScoringDataDto;
 import com.example.apigateway.dto.DocumentCodePassRequest;
 import com.example.apigateway.dto.FinishRegistrationRequestDto;
 import com.example.apigateway.dto.StatementDto;
@@ -25,32 +23,11 @@ public interface ApiGatewayService {
     ResponseEntity<Void> calculateCredit(UUID statementId, FinishRegistrationRequestDto finishRegistrationRequestDto);
 
     /**
-     * Формирование заявки на получение кредита из сервиса Deal
-     * @param loanStatementRequestDto Первичные данные о клиенте (required)
-     * @return Список из 4 кредитных предложений
-     */
-    ResponseEntity<List<LoanOfferDto>> createDealStatement(LoanStatementRequestDto loanStatementRequestDto);
-
-    /**
      * Формирование заявки на получение кредита из сервиса Statement
      * @param loanStatementRequestDto Первичные данные о клиенте (required)
      * @return Список из 4 кредитных предложений
      */
     ResponseEntity<List<LoanOfferDto>> createStatement(LoanStatementRequestDto loanStatementRequestDto);
-
-    /**
-     * Подсчёт кредита для клиента из сервиса calculator
-     * @param scoringDataDto Информация о клиенте и запрашиваемом кредите (required)
-     * @return Информация по кредиту
-     */
-    ResponseEntity<CreditDto> creditCalculation(ScoringDataDto scoringDataDto);
-
-    /**
-     * Формирование заявки на получение кредита из сервиса Calculator
-     * @param loanStatementRequestDto Первичные данные о клиенте (required)
-     * @return Список из 4 кредитных предложений
-     */
-    ResponseEntity<List<LoanOfferDto>> getCreditOffers(LoanStatementRequestDto loanStatementRequestDto);
 
     /**
      * Подтверждение подписи документов с помощью специального кода
@@ -59,13 +36,6 @@ public interface ApiGatewayService {
      * @return 200, если код подходит. 400, если не подходит
      */
     ResponseEntity<Void> documentCodePass(UUID statementId, DocumentCodePassRequest documentCodePassRequest);
-
-    /**
-     * Выбор одного кредитного предложения из предлагаемых в сервисе Deal
-     * @param loanOfferDto Выбранное кредитное предложение (required)
-     * @return 200
-     */
-    ResponseEntity<Void> selectDealOffer(LoanOfferDto loanOfferDto);
 
     /**
      * Выбор одного кредитного предложения из предлагаемых в сервисе Statement

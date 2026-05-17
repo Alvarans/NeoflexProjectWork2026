@@ -1,18 +1,20 @@
 package com.example.apigateway.service;
 
+import com.example.api.common.dto.LoanOfferDto;
 import com.example.api.common.dto.LoanStatementRequestDto;
 import com.example.apigateway.dto.DocumentCodePassRequest;
 import com.example.apigateway.dto.FinishRegistrationRequestDto;
 import com.example.apigateway.dto.StatementDto;
 import com.example.apigateway.service.impl.DealRestClientServiceImpl;
-import com.example.api.common.dto.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 import tools.jackson.databind.ObjectMapper;
 
@@ -20,8 +22,10 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class DealRestClientServiceTest {
@@ -349,7 +353,6 @@ public class DealRestClientServiceTest {
 
     @Test
     void getStatementById_shouldReturnStatement() {
-
         UUID statementId = UUID.randomUUID();
 
         StatementDto statementDto = new StatementDto();
@@ -366,6 +369,9 @@ public class DealRestClientServiceTest {
         )).thenReturn(requestHeadersSpec);
 
         when(requestHeadersSpec.retrieve())
+                .thenReturn(responseSpec);
+
+        when(responseSpec.onStatus(any(), any()))
                 .thenReturn(responseSpec);
 
         when(responseSpec.toEntity(any(ParameterizedTypeReference.class)))

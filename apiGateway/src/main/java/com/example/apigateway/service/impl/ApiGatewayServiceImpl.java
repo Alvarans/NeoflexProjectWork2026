@@ -1,9 +1,7 @@
 package com.example.apigateway.service.impl;
 
-import com.example.api.common.dto.CreditDto;
 import com.example.api.common.dto.LoanOfferDto;
 import com.example.api.common.dto.LoanStatementRequestDto;
-import com.example.api.common.dto.ScoringDataDto;
 import com.example.apigateway.dto.DocumentCodePassRequest;
 import com.example.apigateway.dto.FinishRegistrationRequestDto;
 import com.example.apigateway.dto.StatementDto;
@@ -38,16 +36,6 @@ public class ApiGatewayServiceImpl implements ApiGatewayService {
     }
 
     @Override
-    public ResponseEntity<List<LoanOfferDto>> createDealStatement(LoanStatementRequestDto loanStatementRequestDto) {
-        log.info("POST request come on /deal/statement");
-        log.info("Body: {}", loanStatementRequestDto);
-        ResponseEntity<List<LoanOfferDto>> response = dealRestClientService.createDealStatement(loanStatementRequestDto);
-        log.info("Response status : {}", response.getStatusCode());
-        log.info("Response body : {}", response.getBody());
-        return response;
-    }
-
-    @Override
     public ResponseEntity<List<LoanOfferDto>> createStatement(LoanStatementRequestDto loanStatementRequestDto) {
         log.info("POST request come on /statement");
         log.info("Body: {}", loanStatementRequestDto);
@@ -58,39 +46,10 @@ public class ApiGatewayServiceImpl implements ApiGatewayService {
     }
 
     @Override
-    public ResponseEntity<CreditDto> creditCalculation(ScoringDataDto scoringDataDto) {
-        log.info("POST request come on /calculator/calc");
-        log.info("Body: {}", scoringDataDto);
-        ResponseEntity<CreditDto> response = calculatorRestClientService.creditCalculation(scoringDataDto);
-        log.info("Response status : {}", response.getStatusCode());
-        log.info("Response body : {}", response.getBody());
-        return response;
-    }
-
-    @Override
-    public ResponseEntity<List<LoanOfferDto>> getCreditOffers(LoanStatementRequestDto loanStatementRequestDto) {
-        log.info("POST request come on /calculator/offers");
-        log.info("Body: {}", loanStatementRequestDto);
-        ResponseEntity<List<LoanOfferDto>> response = calculatorRestClientService.creditOffers(loanStatementRequestDto);
-        log.info("Response status : {}", response.getStatusCode());
-        log.info("Response body : {}", response.getBody());
-        return response;
-    }
-
-    @Override
     public ResponseEntity<Void> documentCodePass(UUID statementId, DocumentCodePassRequest documentCodePassRequest) {
         log.info("POST  request come on /deal/document/{statementId}/code with {}", statementId);
         log.info("Body with code: {}", documentCodePassRequest);
         ResponseEntity<Void> response = dealRestClientService.documentCodePass(statementId, documentCodePassRequest);
-        log.info("Response status : {}", response.getStatusCode());
-        return response;
-    }
-
-    @Override
-    public ResponseEntity<Void> selectDealOffer(LoanOfferDto loanOfferDto) {
-        log.info("POST request come on /deal/offer/select");
-        log.info("Body: {}", loanOfferDto);
-        ResponseEntity<Void> response = dealRestClientService.selectDealOffer(loanOfferDto);
         log.info("Response status : {}", response.getStatusCode());
         return response;
     }
