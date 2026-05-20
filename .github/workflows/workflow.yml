@@ -6,7 +6,6 @@ on:
       - main
       - develop
       - feature/MVP-6
-
   pull_request:
 
 jobs:
@@ -14,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-
       postgres:
         image: postgres:16
         env:
@@ -41,24 +39,13 @@ jobs:
         image: confluentinc/cp-kafka:7.6.1
         ports:
           - 9092:9092
-          - 29092:29092
         env:
           KAFKA_BROKER_ID: 1
-
-          KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-
-          KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
-
-          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
-
-          KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-
-          KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-
+          KAFKA_ZOOKEEPER_CONNECT: localhost:2181
+          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -71,7 +58,7 @@ jobs:
 
       - name: Wait for PostgreSQL
         run: |
-          until pg_isready -h postgres -p 5432 -U neoflexuser
+          until pg_isready -h localhost -p 5432 -U neoflexuser
           do
             echo "Waiting for postgres..."
             sleep 2
@@ -79,10 +66,19 @@ jobs:
 
       - name: Wait for Kafka
         run: |
-          sleep 20
+          # Wait for Kafka to be ready
+          timeout 60s bash -c 'until echo > /dev/tcp/localhost/9092; do sleep 2; done'
+          echo "Kafka is ready"
 
       - name: Build and Test
         run: mvn clean verify
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/neoflexbd
+          SPRING_DATASOURCE_USERNAME: neoflexuser
+          SPRING_DATASOURCE_PASSWORD: neoflex
+          SPRING_KAFKA_BOOTSTRAP_SERVERS: localhost:9092
+          SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS: localhost:9092
+          SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS: localhost:9092
 
       - name: SonarCloud Scan
         run: >
