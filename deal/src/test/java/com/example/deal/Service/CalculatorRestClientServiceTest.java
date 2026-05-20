@@ -17,6 +17,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
@@ -58,10 +59,10 @@ public class CalculatorRestClientServiceTest {
         offer4.setIsSalaryClient(true);
 
         List<LoanOfferDto> expectedOffers = List.of(
-                offer1,
-                offer2,
-                offer3,
-                offer4
+                createOffer(false, false),
+                createOffer(true, false),
+                createOffer(false, true),
+                createOffer(true, true)
         );
 
         server.expect(requestTo("http://localhost:8010/calculator/offers"))
@@ -136,5 +137,21 @@ public class CalculatorRestClientServiceTest {
         );
 
         server.verify();
+    }
+
+    private LoanOfferDto createOffer(boolean insurance, boolean salary) {
+        LoanOfferDto dto = new LoanOfferDto();
+
+        dto.setStatementId(UUID.randomUUID());
+        dto.setRequestedAmount(BigDecimal.valueOf(100000));
+        dto.setTotalAmount(BigDecimal.valueOf(120000));
+        dto.setTerm(12);
+        dto.setMonthlyPayment(BigDecimal.valueOf(10000));
+        dto.setRate(BigDecimal.valueOf(15));
+
+        dto.setIsInsuranceEnabled(insurance);
+        dto.setIsSalaryClient(salary);
+
+        return dto;
     }
 }
