@@ -48,15 +48,20 @@ jobs:
           KAFKA_BROKER_ID: 1
           KAFKA_ZOOKEEPER_CONNECT: localhost:2181
           KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+          KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
           KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
           KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
           KAFKA_NUM_PARTITIONS: 1
+          # Увеличиваем таймауты для медленного старта
+          KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 5000
+          KAFKA_BROKER_RACK: default-rack
         options: >-
-          --health-cmd="kafka-topics --bootstrap-server localhost:9092 --list"
-          --health-interval=15s
-          --health-timeout=10s
+          --health-cmd="kafka-broker-api-versions --bootstrap-server localhost:9092"
+          --health-interval=30s
+          --health-timeout=20s
           --health-retries=10
+          --health-start-period=60s
 
     steps:
       - name: Checkout
