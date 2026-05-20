@@ -14,30 +14,83 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+
+      postgres:
+        image: postgres:16
+
+        env:
+          POSTGRES_DB: neoflexbd
+          POSTGRES_USER: neoflexuser
+          POSTGRES_PASSWORD: neoflex
+
+        ports:
+          - 5432:5432
+
+        options: >-
+          --health-cmd="pg_isready -U neoflexuser -d neoflexbd"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+      zookeeper:
+        image: confluentinc/cp-zookeeper:7.6.1
+
+        env:
+          ZOOKEEPER_CLIENT_PORT: 2181
+          ZOOKEEPER_TICK_TIME: 2000
+
+        ports:
+          - 2181:2181
+
+      kafka:
+        image: confluentinc/cp-kafka:7.6.1
+
+        ports:
+          - 9092:9092
+          - 29092:29092
+
+        env:
+          KAFKA_BROKER_ID: 1
+          KAFKA_ZOOKEEPER_CONNECT: localhost:2181
+
+          KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+
+          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092,PLAINTEXT_HOST://localhost:9092
+
+          KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+
+          KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+          KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     steps:
 
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
           cache: maven
 
-      - name: Build and run tests
-        run: mvn clean verify
+      - name: Wait for Kafka
+        run: |
+          sleep 20
 
-      - name: Upload coverage to Coveralls
-        run: mvn coveralls:report
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      - name: Build and Test
+        run: mvn clean verify
 
       - name: SonarCloud Scan
         run: >
           mvn sonar:sonar
           -Dsonar.projectKey=YOUR_PROJECT_KEY
-          -Dsonar.organization=YOUR_ORGANIZATION
+          -Dsonar.organization=YOUR_ORG
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
