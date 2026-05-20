@@ -17,7 +17,7 @@ import java.io.UnsupportedEncodingException;
 @Component
 public class LoggingFilter extends OncePerRequestFilter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(com.example.deal.utils.LoggingFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingFilter.class);
 
 
     private String getStringValue(byte[] contentAsByteArray, String characterEncoding) {

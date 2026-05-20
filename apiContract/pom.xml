@@ -13,6 +13,7 @@
     <name>apiContract</name>
     <description>apiContract</description>
     <url/>
+    <packaging>jar</packaging>
     <licenses>
         <license/>
     </licenses>
@@ -101,7 +102,7 @@
                                     @lombok.AllArgsConstructor
                                     @lombok.Builder
                                 </additionalModelTypeAnnotations>
-                                <generatedConstructorWithRequiredArgs>true</generatedConstructorWithRequiredArgs>
+                                <generatedConstructorWithRequiredArgs>false</generatedConstructorWithRequiredArgs>
                                 <useTags>true</useTags>
                                 <skipDefaultInterface>true</skipDefaultInterface>
                                 <generateBuilders>true</generateBuilders>

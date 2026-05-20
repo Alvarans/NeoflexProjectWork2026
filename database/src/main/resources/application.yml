@@ -2,7 +2,7 @@ spring:
   application:
     name: Database
   datasource:
-    url: jdbc:postgresql://localhost:5432/neoflexbd
+    url: jdbc:postgresql://postgres:5432/neoflexbd
     username: neoflexuser
     password: neoflex
   liquibase:

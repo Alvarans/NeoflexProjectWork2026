@@ -1,6 +1,6 @@
 package com.example.dossier.service.impl;
 
-import com.example.dossier.dto.EmailMessage;
+import com.example.api.common.dto.EmailMessage;
 import com.example.dossier.service.EmailConsumerService;
 import com.example.dossier.service.MailService;
 import lombok.RequiredArgsConstructor;

@@ -1,0 +1,163 @@
+version: '3.9'
+
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: spring-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: neoflexbd
+      POSTGRES_USER: neoflexuser
+      POSTGRES_PASSWORD: neoflex
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U neoflexuser -d neoflexbd" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.1
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - kafka-net
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    networks:
+      - kafka-net
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+      # Слушаем на порту 29092 для внутренних нужд и 9092 для внешних
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+
+      # Протокол для общения между брокерами (внутри сети Docker)
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:v0.7.2
+    container_name: kafka-ui
+    ports:
+      - "8085:8080"
+    depends_on:
+      - kafka
+    networks:
+      - kafka-net
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+
+  kafka-init:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: kafka-init
+    depends_on:
+      - kafka
+    networks:
+      - kafka-net
+    entrypoint: [ "/bin/sh", "-c" ]
+    command: |
+      "
+      echo 'Waiting for Kafka...'
+      cub kafka-ready -b kafka:29092 1 20
+
+      echo 'Creating topics...'
+
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic finish-registration --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic create-documents --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic send-documents --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic send-ses --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic credit-issued --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic statement-denied --replication-factor 1 --partitions 1
+
+      echo 'Topics created'
+      "
+
+  calculator:
+    build:
+      context: .
+      dockerfile: calculator/Dockerfile
+    container_name: calculator
+    ports:
+      - "8010:8010"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  deal:
+    build:
+      context: .
+      dockerfile: deal/Dockerfile
+    container_name: deal
+    ports:
+      - "8011:8011"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  statement:
+    build:
+      context: .
+      dockerfile: statement/Dockerfile
+    container_name: statement
+    ports:
+      - "8012:8012"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  dossier:
+    build:
+      context: .
+      dockerfile: dossier/Dockerfile
+    container_name: dossier
+    ports:
+      - "8013:8013"
+    depends_on:
+      kafka:
+        condition: service_started
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: apiGateway/Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8015:8015"
+    depends_on:
+      - calculator
+      - deal
+      - statement
+
+volumes:
+  postgres_data:
+
+networks:
+  kafka-net:

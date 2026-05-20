@@ -1,6 +1,6 @@
 package com.example.deal.service;
 
-import com.example.dossier.dto.EmailMessage;
+import com.example.api.common.dto.EmailMessage;
 
 
 public interface KafkaProducerService {

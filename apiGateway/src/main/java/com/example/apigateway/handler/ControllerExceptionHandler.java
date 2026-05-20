@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
-    Logger logger = LoggerFactory.getLogger(com.example.deal.handler.ControllerExceptionHandler.class);
+    Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> illegalArgument(IllegalArgumentException iae, WebRequest request){

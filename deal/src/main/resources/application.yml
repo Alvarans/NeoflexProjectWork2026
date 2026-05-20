@@ -2,7 +2,7 @@ spring:
   application:
     name: deal
   datasource:
-    url: jdbc:postgresql://localhost:5432/neoflexbd
+    url: jdbc:postgresql://postgres:5432/neoflexbd
     username: neoflexuser
     password: neoflex
   liquibase:
@@ -12,14 +12,14 @@ spring:
     hibernate:
       ddl-auto: none
   kafka:
-    bootstrap-servers: localhost:9092  # 'kafka' — это имя сервиса в docker-compose
+    bootstrap-servers: kafka:29092  # kafka
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 services:
   calculator:
-    url: http://localhost:8010
+    url: http://calculator:8010
 
 server:
   port: 8011
