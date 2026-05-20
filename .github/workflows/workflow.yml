@@ -34,6 +34,11 @@ jobs:
           ZOOKEEPER_TICK_TIME: 2000
         ports:
           - 2181:2181
+        options: >-
+          --health-cmd="echo stat | nc localhost 2181"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
       kafka:
         image: confluentinc/cp-kafka:7.6.1
@@ -44,6 +49,14 @@ jobs:
           KAFKA_ZOOKEEPER_CONNECT: localhost:2181
           KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+          KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+          KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+          KAFKA_NUM_PARTITIONS: 1
+        options: >-
+          --health-cmd="kafka-topics --bootstrap-server localhost:9092 --list"
+          --health-interval=15s
+          --health-timeout=10s
+          --health-retries=10
 
     steps:
       - name: Checkout
@@ -58,27 +71,52 @@ jobs:
 
       - name: Wait for PostgreSQL
         run: |
-          until pg_isready -h localhost -p 5432 -U neoflexuser
-          do
-            echo "Waiting for postgres..."
+          for i in {1..30}; do
+            if pg_isready -h localhost -p 5432 -U neoflexuser -d neoflexbd; then
+              echo "PostgreSQL is ready"
+              break
+            fi
+            echo "Waiting for PostgreSQL... $i/30"
+            sleep 2
+          done
+
+      - name: Wait for Zookeeper
+        run: |
+          for i in {1..30}; do
+            if echo stat | nc -w 2 localhost 2181 | grep -q "Mode:"; then
+              echo "Zookeeper is ready"
+              break
+            fi
+            echo "Waiting for Zookeeper... $i/30"
             sleep 2
           done
 
       - name: Wait for Kafka
         run: |
-          # Wait for Kafka to be ready
-          timeout 60s bash -c 'until echo > /dev/tcp/localhost/9092; do sleep 2; done'
-          echo "Kafka is ready"
+          for i in {1..40}; do
+            if kafka-topics --bootstrap-server localhost:9092 --list 2>/dev/null; then
+              echo "Kafka is ready"
+              break
+            fi
+            echo "Waiting for Kafka... $i/40"
+            sleep 3
+          done
+        env:
+          KAFKA_OPTS: -Djava.net.preferIPv4Stack=true
+
+      - name: Debug network
+        run: |
+          echo "=== Check running services ==="
+          docker ps
+          echo "=== Check ports ==="
+          netstat -tulpn 2>/dev/null | grep -E '5432|2181|9092' || true
+          echo "=== Test Kafka connection ==="
+          nc -zv localhost 9092 || true
 
       - name: Build and Test
-        run: mvn clean verify
+        run: mvn clean verify -Dspring.profiles.active=ci
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/neoflexbd
-          SPRING_DATASOURCE_USERNAME: neoflexuser
-          SPRING_DATASOURCE_PASSWORD: neoflex
-          SPRING_KAFKA_BOOTSTRAP_SERVERS: localhost:9092
-          SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS: localhost:9092
-          SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS: localhost:9092
+          SPRING_PROFILES_ACTIVE: ci
 
       - name: SonarCloud Scan
         run: >
@@ -87,8 +125,10 @@ jobs:
           -Dsonar.organization=YOUR_ORG
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+        if: success()
 
       - name: Coveralls
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+        if: success()
