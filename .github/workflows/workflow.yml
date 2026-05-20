@@ -1,4 +1,5 @@
 name: workflow.yml
+
 on:
   push:
     branches:
@@ -9,24 +10,19 @@ on:
   pull_request:
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     services:
 
       postgres:
         image: postgres:16
-
         env:
           POSTGRES_DB: neoflexbd
           POSTGRES_USER: neoflexuser
           POSTGRES_PASSWORD: neoflex
-
         ports:
           - 5432:5432
-
         options: >-
           --health-cmd="pg_isready -U neoflexuser -d neoflexbd"
           --health-interval=10s
@@ -35,34 +31,32 @@ jobs:
 
       zookeeper:
         image: confluentinc/cp-zookeeper:7.6.1
-
         env:
           ZOOKEEPER_CLIENT_PORT: 2181
           ZOOKEEPER_TICK_TIME: 2000
-
         ports:
           - 2181:2181
 
       kafka:
         image: confluentinc/cp-kafka:7.6.1
-
         ports:
           - 9092:9092
           - 29092:29092
-
         env:
           KAFKA_BROKER_ID: 1
-          KAFKA_ZOOKEEPER_CONNECT: localhost:2181
+
+          KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
 
           KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
 
-          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092,PLAINTEXT_HOST://localhost:9092
+          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
 
           KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
 
           KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
 
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
     steps:
 
       - name: Checkout
@@ -74,6 +68,14 @@ jobs:
           distribution: temurin
           java-version: 21
           cache: maven
+
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h postgres -p 5432 -U neoflexuser
+          do
+            echo "Waiting for postgres..."
+            sleep 2
+          done
 
       - name: Wait for Kafka
         run: |
