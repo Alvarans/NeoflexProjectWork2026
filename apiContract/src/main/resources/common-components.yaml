@@ -24,6 +24,7 @@ components:
           format: decimal
           minimum: 20000
           example: 30000.00
+          nullable: false
         term:
           description: Срок кредита
           type: integer
@@ -35,6 +36,7 @@ components:
           minLength: 2
           maxLength: 30
           example: Boris
+          nullable: false
         lastName:
           description: Фамилия клиента
           type: string
