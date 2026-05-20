@@ -5,7 +5,7 @@ spring:
     bootstrap-servers: localhost:9092
     consumer:
       group-id: dossier-group
-      auto-offset-reset: earliest
+      auto-offset-reset: latest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
     producer:
@@ -19,8 +19,12 @@ spring:
     username: itworkspacemail@gmail.com
     password: ${NEOFLEX_DOSSIER_MAIL_PASSWORD_01}
     properties:
-      mail.smtp.auth: true
-      mail.smtp.starttls.enable: true
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
 
 services:
   deal:

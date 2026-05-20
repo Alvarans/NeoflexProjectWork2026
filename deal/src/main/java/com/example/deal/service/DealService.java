@@ -3,6 +3,7 @@ package com.example.deal.service;
 import com.example.api.common.dto.LoanOfferDto;
 import com.example.api.common.dto.LoanStatementRequestDto;
 import com.example.deal.dto.FinishRegistrationRequestDto;
+import com.example.deal.dto.StatementDto;
 
 import java.util.List;
 import java.util.UUID;
@@ -56,4 +57,8 @@ public interface DealService {
      * @return Прошёл ли код проверку
      */
     boolean documentCodePass(UUID statementId, String code);
+
+    StatementDto getStatement(UUID statementId);
+
+    List<StatementDto> getAllStatements();
 }

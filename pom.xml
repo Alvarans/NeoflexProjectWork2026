@@ -23,6 +23,7 @@
         <module>statement</module>
         <module>database</module>
         <module>dossier</module>
+        <module>apiGateway</module>
     </modules>
 
     <dependencies>

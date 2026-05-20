@@ -6,8 +6,10 @@ import com.example.api.common.dto.LoanStatementRequestDto;
 import com.example.api.common.dto.ScoringDataDto;
 import com.example.deal.dto.ApplicationStatus;
 import com.example.deal.dto.FinishRegistrationRequestDto;
+import com.example.deal.dto.StatementDto;
 import com.example.deal.entity.StatementEntity;
 import com.example.deal.mapping.ScoringDataMapper;
+import com.example.deal.mapping.StatementMapper;
 import com.example.deal.service.*;
 import com.example.dossier.dto.EmailMessage;
 import com.example.dossier.dto.EmailTheme;
@@ -33,6 +35,7 @@ public class DealServiceImpl implements DealService {
     private final CalculatorRestClientService calculatorRestClientService;
     private final ScoringDataMapper scoringDataMapper;
     private final KafkaProducerService kafkaProducerService;
+    private final StatementMapper statementMapper;
 
     /**
      * Формирование данных для подсчёта кредита и дополнение информации о клиенте
@@ -139,6 +142,19 @@ public class DealServiceImpl implements DealService {
             kafkaProducerService.send("statement-denied", makeEmail(statementId, statementEntity.getClient().getEmail(), EmailTheme.STATEMENT_DENIED));
             return false;
         }
+    }
+
+    @Override
+    public StatementDto getStatement(UUID statementId) {
+        StatementDto statementDto = statementMapper.toStatementDto(statementService.getStatement(statementId));
+        log.info("Got statement for: {}. {}", statementId, statementDto.toString());
+        return statementDto;
+    }
+
+    @Override
+    public List<StatementDto> getAllStatements() {
+        log.info("Getting all statements for admin purposes");
+        return statementMapper.toStatementDtoList(statementService.getAllStatements());
     }
 
     /**

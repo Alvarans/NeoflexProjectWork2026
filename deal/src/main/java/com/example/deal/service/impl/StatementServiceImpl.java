@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -138,5 +139,13 @@ public class StatementServiceImpl implements StatementService {
         statementEntity.setApplicationStatus(ApplicationStatus.DOCUMENT_SIGNED);
         log.info("Updated signed statement: {}", statementEntity);
         updateStatement(statementEntity);
+    }
+
+    /**
+     * Получение списка всех заявок
+     * @return список заявок
+     */
+    public List<StatementEntity> getAllStatements(){
+        return statementRepository.findAll();
     }
 }
