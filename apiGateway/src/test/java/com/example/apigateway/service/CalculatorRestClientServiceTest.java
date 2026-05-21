@@ -55,7 +55,6 @@ class CalculatorRestClientServiceTest {
 
         service = new CalculatorRestClientServiceImpl(
                 restClientBuilder,
-                objectMapper,
                 "http://localhost:8010"
         );
     }

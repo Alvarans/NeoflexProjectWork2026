@@ -21,11 +21,9 @@ import java.util.List;
 @Slf4j
 public class CalculatorRestClientServiceImpl implements CalculatorRestClientService {
     private final RestClient restClient;
-    private final ObjectMapper objectMapper;
 
-    public CalculatorRestClientServiceImpl(RestClient.Builder restClientBuilder, ObjectMapper objectMapper
-            , @Value("${services.calculator.url}") String baseUrl) {
-        this.objectMapper = objectMapper;
+    public CalculatorRestClientServiceImpl(RestClient.Builder restClientBuilder,
+             @Value("${services.calculator.url}") String baseUrl) {
         this.restClient = restClientBuilder
                 .baseUrl(baseUrl)
                 .build();

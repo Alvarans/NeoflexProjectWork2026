@@ -18,6 +18,7 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
+    private static final String ERROR = "error";
     Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -49,7 +50,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Map<String, String> handleReadableException(HttpMessageNotReadableException ex) {
         Map<String, String> errors = new HashMap<>();
-        errors.put("error", "Malformed JSON request or missing required fields");
+        errors.put(ERROR, "Malformed JSON request or missing required fields");
         errors.put("details", ex.getMostSpecificCause().getMessage());
         logger.error("JSON parsing error: {}", ex.getMessage());
         return errors;
@@ -59,7 +60,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     public Map<String, String> handleNullPointer(NullPointerException ex) {
         Map<String, String> error = new HashMap<>();
-        error.put("error", "Data not found or reference is null");
+        error.put(ERROR, "Data not found or reference is null");
         error.put("message", ex.getMessage());
         logger.error("NPE Exception: ", ex);
         return error;
@@ -68,7 +69,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(HttpClientErrorException.class)
     public ResponseEntity<Map<String, Object>> handleHttpClientException(HttpClientErrorException ex) {
         Map<String, Object> body = new HashMap<>();
-        body.put("error", "Validation Error from External Service");
+        body.put(ERROR, "Validation Error from External Service");
         // Извлекаем само сообщение "Your age must be more than 18"
         body.put("details", ex.getResponseBodyAsString());
 

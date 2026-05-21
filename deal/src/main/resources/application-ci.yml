@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/neoflexbd
-    username: neoflexuser
-    password: neoflex
+    username: ${DB_USERNAME:neoflexuser}
+    password: ${DB_PASSWORD:neoflex}
   kafka:
     bootstrap-servers: localhost:9092
     producer:

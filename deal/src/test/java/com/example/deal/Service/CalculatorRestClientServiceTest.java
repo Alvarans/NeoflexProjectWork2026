@@ -32,12 +32,10 @@ class CalculatorRestClientServiceTest {
 
     @BeforeEach
     void setUp() {
-        objectMapper = new ObjectMapper();
-
         RestClient.Builder builder = RestClient.builder();
         server = MockRestServiceServer.bindTo(builder).build();
 
-        service = new CalculatorRestClientServiceImpl(builder, objectMapper, "http://localhost:8010");
+        service = new CalculatorRestClientServiceImpl(builder, "http://localhost:8010");
     }
 
     @Test

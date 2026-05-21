@@ -3,8 +3,8 @@ spring:
     name: deal
   datasource:
     url: jdbc:postgresql://postgres:5432/neoflexbd
-    username: neoflexuser
-    password: neoflex
+    username: ${DB_USERNAME:neoflexuser}
+    password: ${DB_PASSWORD:neoflex}
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.xml

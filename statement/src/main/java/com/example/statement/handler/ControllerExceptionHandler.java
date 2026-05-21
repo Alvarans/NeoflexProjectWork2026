@@ -19,7 +19,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class ControllerExceptionHandler {
     Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
-
+    private static final String ERROR = "error";
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> illegalArgument(IllegalArgumentException iae, WebRequest request){
         logger.error("Illegal argument exception handled: {}", iae.getMessage());
@@ -49,7 +49,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Map<String, String> handleReadableException(HttpMessageNotReadableException ex) {
         Map<String, String> errors = new HashMap<>();
-        errors.put("error", "Malformed JSON request or missing required fields");
+        errors.put(ERROR, "Malformed JSON request or missing required fields");
         errors.put("details", ex.getMostSpecificCause().getMessage());
         logger.error("JSON parsing error: {}",ex.getMessage());
         return errors;
@@ -59,7 +59,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     public Map<String, String> handleNullPointer(NullPointerException ex) {
         Map<String, String> error = new HashMap<>();
-        error.put("error", "Data not found or reference is null");
+        error.put(ERROR, "Data not found or reference is null");
         error.put("message", ex.getMessage());
         logger.error("NPE Exception: ", ex);
         return error;
@@ -68,7 +68,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(HttpClientErrorException.class)
     public ResponseEntity<Map<String, Object>> handleHttpClientException(HttpClientErrorException ex) {
         Map<String, Object> body = new HashMap<>();
-        body.put("error", "Validation Error from External Service");
+        body.put(ERROR, "Validation Error from External Service");
         // Извлекаем само сообщение "Your age must be more than 18"
         body.put("details", ex.getResponseBodyAsString());
 
@@ -79,7 +79,7 @@ public class ControllerExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleFeignException(feign.FeignException ex) {
         Map<String, Object> body = new HashMap<>();
         String responseBody = ex.contentUTF8();
-        body.put("error", "Error from External Service");
+        body.put(ERROR, "Error from External Service");
         body.put("message", responseBody.isEmpty() ? ex.getMessage() : responseBody);
         body.put("status", ex.status());
         return ResponseEntity

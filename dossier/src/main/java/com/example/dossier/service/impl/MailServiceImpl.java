@@ -131,7 +131,7 @@ public class MailServiceImpl implements MailService {
 
         } catch (Exception e) {
             log.error("Ошибка отправки письма: statementId={}", statementId, e);
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 }
