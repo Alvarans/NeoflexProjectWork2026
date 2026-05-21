@@ -124,15 +124,17 @@ jobs:
           SPRING_PROFILES_ACTIVE: ci
 
       - name: SonarCloud Scan
-        run: mvn sonar:sonar
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        uses: SonarSource/sonarcloud-github-action@ba3875ecf642b2129de2b589510c81a8b53dbf4e
         with:
           args: >
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
             -Dsonar.host.url=https://sonarcloud.io
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         if: success()
+
 
       - name: Coveralls
         uses: coverallsapp/github-action@0a51d2e0b5417d06e4ecceb534aec87defc53926
