@@ -5,7 +5,7 @@ RUN addgroup --system --gid 1001 appgroup && \
     adduser --system --uid 1001 --gid 1001 appuser
 
 WORKDIR /app
-COPY apigateway/target/*.jar app.jar
+COPY apiGateway/target/*.jar app.jar
 RUN chown -R appuser:appgroup /app
 USER appuser
 
