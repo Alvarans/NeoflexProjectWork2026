@@ -126,10 +126,17 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
       - name: SonarCloud Scan
-        run: mvn sonar:sonar -Dsonar.token=$SONAR_TOKEN
+        run: |
+          mvn sonar:sonar \
+            -Dsonar.token=$SONAR_TOKEN \
+            -Dsonar.projectKey=$PROJECT_KEY \
+            -Dsonar.organization=$ORGANISATION \
+            -Dsonar.host.url=https://sonarcloud.io
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+          ORGANISATION: ${{ secrets.SONAR_ORGANIZATION }}
         if: success()
 
 
