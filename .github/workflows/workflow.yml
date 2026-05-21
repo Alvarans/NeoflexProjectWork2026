@@ -122,6 +122,8 @@ jobs:
         run: mvn clean verify -Dspring.profiles.active=ci
         env:
           SPRING_PROFILES_ACTIVE: ci
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@ba3875ecf642b2129de2b589510c81a8b53dbf4e
