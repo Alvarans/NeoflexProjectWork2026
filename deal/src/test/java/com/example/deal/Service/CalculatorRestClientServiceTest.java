@@ -34,7 +34,7 @@ class CalculatorRestClientServiceTest {
     void setUp() {
         RestClient.Builder builder = RestClient.builder();
         server = MockRestServiceServer.bindTo(builder).build();
-
+        objectMapper = new ObjectMapper();
         service = new CalculatorRestClientServiceImpl(builder, "http://localhost:8010");
     }
 
