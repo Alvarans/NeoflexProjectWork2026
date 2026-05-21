@@ -17,8 +17,8 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_DB: neoflexbd
-          POSTGRES_USER: neoflexuser
-          POSTGRES_PASSWORD: ${DB_PASSWORD:neoflex}
+          POSTGRES_USER: ${{ secrets.DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
         ports:
           - 5432:5432
         options: >-
