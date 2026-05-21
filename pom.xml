@@ -114,6 +114,13 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/dto/**/*</exclude>
+                                <exclude>**/generated/**/*</exclude>
+                                <exclude>**/apiContract/**/*</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
 
                 </executions>
