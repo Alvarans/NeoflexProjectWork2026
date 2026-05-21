@@ -25,7 +25,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @ExtendWith(MockitoExtension.class)
-public class CalculatorRestClientServiceTest {
+class CalculatorRestClientServiceTest {
     private CalculatorRestClientServiceImpl service;
     private MockRestServiceServer server;
     private ObjectMapper objectMapper;
@@ -126,9 +126,10 @@ public class CalculatorRestClientServiceTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(objectMapper.writeValueAsString(emptyCreditDto)));
 
+        ScoringDataDto scoringData = new ScoringDataDto();
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> service.calculateCredit(new ScoringDataDto())
+                () -> service.calculateCredit(scoringData)
         );
 
         assertEquals(

@@ -27,14 +27,14 @@ public class ControllerExceptionHandler {
      */
     @ExceptionHandler(ArithmeticException.class)
     public ResponseEntity<String> divideByZero(ArithmeticException ex, WebRequest request) {
-        logger.error("Arithmetic exception handled: " + ex.getMessage());
+        logger.error("Arithmetic exception handled: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> illegalArgument(IllegalArgumentException iae, WebRequest request){
-        logger.error("Illegal argument exception handled: " + iae.getMessage());
+        logger.error("Illegal argument exception handled: {}", iae.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(iae.getMessage());
     }
     /**
@@ -48,10 +48,10 @@ public class ControllerExceptionHandler {
     public Map<String, String> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
-            logger.error("Validation error. In field " + fieldName + " with message: " + errorMessage);
+            logger.error("Validation error. In field {} with message: {}", fieldName, errorMessage);
             errors.put(fieldName, errorMessage);
         });
         return errors;

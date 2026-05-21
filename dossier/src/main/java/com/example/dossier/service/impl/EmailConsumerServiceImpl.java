@@ -45,6 +45,7 @@ public class EmailConsumerServiceImpl implements EmailConsumerService {
             case "send-documents" -> emailService.sendDocuments(message);
             case "credit-issued" -> emailService.sendCreditIssued(message);
             case "statement-denied" -> emailService.sendDenied(message);
+            default -> emailService.sendDocuments(message);
         }
     }
 }

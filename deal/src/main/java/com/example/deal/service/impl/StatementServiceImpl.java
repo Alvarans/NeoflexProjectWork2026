@@ -30,6 +30,7 @@ public class StatementServiceImpl implements StatementService {
     private final ClientService clientService;
     private final KafkaProducerService kafkaProducerService;
 
+    private static final String ENTITY_NOT_FOUND_MESSAGE = "Can't find statement with such id";
     /**
      * Создание новой заявки
      *
@@ -67,7 +68,7 @@ public class StatementServiceImpl implements StatementService {
      * @return Искомая заявка
      */
     public StatementEntity getStatement(UUID statementId) {
-        return statementRepository.findByStatementId(statementId).orElseThrow(() -> new EntityNotFoundException("Can't find statement with such id"));
+        return statementRepository.findByStatementId(statementId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND_MESSAGE));
     }
 
     /**
@@ -92,7 +93,7 @@ public class StatementServiceImpl implements StatementService {
      */
     public StatementEntity getStatementForUpdate(UUID statementId) {
         return statementRepository.findByStatementIdForUpdate(statementId)
-                .orElseThrow(() -> new EntityNotFoundException("Can't find statement with such id"));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND_MESSAGE));
     }
 
     /**
@@ -103,7 +104,7 @@ public class StatementServiceImpl implements StatementService {
      */
     public String getClientEmailFromStatementByStatementId(UUID statementId) {
         return statementRepository.findClientEmailByStatementId(statementId)
-                .orElseThrow(() -> new EntityNotFoundException("Can't find statement with such id"));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND_MESSAGE));
     }
 
     /**

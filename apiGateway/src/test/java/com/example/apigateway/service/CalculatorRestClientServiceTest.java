@@ -26,7 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class CalculatorRestClientServiceTest {
+class CalculatorRestClientServiceTest {
     @Mock
     private RestClient.Builder restClientBuilder;
 

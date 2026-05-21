@@ -144,7 +144,7 @@ public class CalculatorServiceImpl implements CalculatorService {
         paymentScheduleElementDto.setRemainingDebt(remainingDebt.setScale(2, RoundingMode.HALF_EVEN));
         //Устанавливаем дату платежа
         LocalDate today = LocalDate.now();
-        paymentScheduleElementDto.setDate(today.plusMonths(number - 1));
+        paymentScheduleElementDto.setDate(today.plusMonths(number - 1L));
         log.info("New payment added in schedule" + paymentScheduleElementDto);
         //Создаём лист платежей для записи в него
         List<PaymentScheduleElementDto> paymentSchedule;

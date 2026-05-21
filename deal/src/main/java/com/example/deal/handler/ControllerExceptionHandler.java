@@ -27,7 +27,7 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> illegalArgument(IllegalArgumentException iae, WebRequest request){
-        logger.error("Illegal argument exception handled: " + iae.getMessage());
+        logger.error("Illegal argument exception handled: {}", iae.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(iae.getMessage());
     }
     /**
@@ -41,10 +41,10 @@ public class ControllerExceptionHandler {
     public Map<String, String> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
-            logger.error("Validation error. In field " + fieldName + " with message: " + errorMessage);
+            logger.error("Validation error. In field {} with message: {}", fieldName, errorMessage);
             errors.put(fieldName, errorMessage);
         });
         return errors;
@@ -56,7 +56,7 @@ public class ControllerExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", "Malformed JSON request or missing required fields");
         errors.put("details", ex.getMostSpecificCause().getMessage());
-        logger.error("JSON parsing error: " + ex.getMessage());
+        logger.error("JSON parsing error: {}", ex.getMessage());
         return errors;
     }
 

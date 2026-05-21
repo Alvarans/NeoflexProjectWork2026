@@ -25,6 +25,7 @@ import java.util.UUID;
 public class DealRestClientServiceImpl implements DealRestClientService {
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
+    private static final String RESPONSE_CODE = "Response code : {}";
 
     public DealRestClientServiceImpl(RestClient.Builder restClientBuilder, ObjectMapper objectMapper
             , @Value("${services.deal.url}") String baseUrl) {
@@ -54,7 +55,7 @@ public class DealRestClientServiceImpl implements DealRestClientService {
                 .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
                     log.error("Error was caused in selection offer. Validation failed. Request body: {}", loanOfferDto);
                     CreditDto errorDto = objectMapper.readValue(response.getBody(), CreditDto.class);
-                    log.info("Response code : {}", response.getStatusCode());
+                    log.info(RESPONSE_CODE, response.getStatusCode());
                     log.info("Response body : {}", errorDto.toString());
                     throw new IllegalArgumentException("Ошибка валидации данных: " + errorDto.toString());
                 })
@@ -70,7 +71,7 @@ public class DealRestClientServiceImpl implements DealRestClientService {
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
                     log.error("Code verification failed. Code is wrong. Rejected. Statement ID: {}", statementId);
-                    log.info("Response code : {}", response.getStatusCode());
+                    log.info(RESPONSE_CODE, response.getStatusCode());
                     throw new IllegalArgumentException("Ошибка подтверждения кода");
                 })
                 .toBodilessEntity();
@@ -83,7 +84,7 @@ public class DealRestClientServiceImpl implements DealRestClientService {
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
                     log.error("Failed to send documents. StatementID: {}", statementId);
-                    log.info("Response code : {}", response.getStatusCode());
+                    log.info(RESPONSE_CODE, response.getStatusCode());
                     throw new IllegalArgumentException("Ошибка отправки документов");
                 })
                 .toBodilessEntity();
@@ -97,8 +98,7 @@ public class DealRestClientServiceImpl implements DealRestClientService {
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
                     log.error("Failed to send documents on sign. StatementID: {}", statementId);
-                    log.info("Response code : {}", response.getStatusCode());
-                    CreditDto errorDto = objectMapper.readValue(response.getBody(), CreditDto.class);
+                    log.info(RESPONSE_CODE, response.getStatusCode());
                     throw new IllegalArgumentException("Ошибка отправки документов на подпись");
                 })
                 .toBodilessEntity();
@@ -114,7 +114,7 @@ public class DealRestClientServiceImpl implements DealRestClientService {
                 .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
                     log.error("Failed to calculate credit. StatementID: {}", statementId);
                     log.info("Request body: {}", finishRegistrationRequestDto);
-                    log.info("Response code : {}", response.getStatusCode());
+                    log.info(RESPONSE_CODE, response.getStatusCode());
                     log.info("Response body : {}", response.getBody());
                     throw new IllegalArgumentException("Check your data. Validation goes wrong");
                 })
@@ -136,7 +136,7 @@ public class DealRestClientServiceImpl implements DealRestClientService {
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
                     log.error("Failed to get statement - statement not found. StatementID: {}", statementId);
-                    log.info("Response code : {}", response.getStatusCode());
+                    log.info(RESPONSE_CODE, response.getStatusCode());
                     throw new IllegalArgumentException("Check your statement Id. Statement not found");
                 })
                 .toEntity(new ParameterizedTypeReference<>() {});

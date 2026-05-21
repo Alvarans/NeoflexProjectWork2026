@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class StatementLockTest {
+class StatementLockTest {
 
     @Autowired
     private StatementService statementService;
@@ -70,7 +70,7 @@ public class StatementLockTest {
             StatementEntity entity = new StatementEntity();
             entity.setClient(client);
             entity.setApplicationStatus(ApplicationStatus.PREAPPROVAL);
-            entity.setCreationDate(LocalDateTime.now()); // ());
+            entity.setCreationDate(LocalDateTime.now());
 
             entity = statementRepository.saveAndFlush(entity);
             return entity.getStatementId();

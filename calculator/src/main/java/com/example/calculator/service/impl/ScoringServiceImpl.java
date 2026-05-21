@@ -108,7 +108,7 @@ public class ScoringServiceImpl implements ScoringService {
                                            boolean isSalaryClient) {
         if (amount == null)
             amount = BigDecimal.ZERO;
-        return isInsuranceEnabled & (!isSalaryClient) ? amount.add(new BigDecimal("100000")) : amount;
+        return isInsuranceEnabled && (!isSalaryClient) ? amount.add(new BigDecimal("100000")) : amount;
     }
 
     /**
@@ -165,15 +165,5 @@ public class ScoringServiceImpl implements ScoringService {
      */
     public BigDecimal calculatePSK(BigDecimal monthlyPayment, Integer term) {
         return monthlyPayment.multiply(new BigDecimal(term));
-    }
-
-    /**
-     * Method for checking string on letters
-     *
-     * @param word - checking word
-     * @return true, if word contains only letters, or false, if not
-     */
-    private boolean isLatina(String word) {
-        return word.matches("^[A-Za-z]+$");
     }
 }

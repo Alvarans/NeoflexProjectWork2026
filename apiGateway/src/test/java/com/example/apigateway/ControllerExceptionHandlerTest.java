@@ -152,6 +152,7 @@ class ControllerExceptionHandlerTest {
     }
 
     private void dummyMethod(TestDto dto) {
+        //Method for testing exception
     }
 
     private static class TestDto {

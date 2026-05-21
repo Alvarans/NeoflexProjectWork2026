@@ -57,8 +57,6 @@ public class CalculatorRestClientServiceImpl implements CalculatorRestClientServ
                 .body(scoringDataDto)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
-                    // Извлекаем тело (пустой CreditDto согласно вашей спеке)
-                    CreditDto errorDto = objectMapper.readValue(response.getBody(), CreditDto.class);
                     throw new IllegalArgumentException("Check your data. Validation goes wrong");
                 })
                 .body(CreditDto.class);
