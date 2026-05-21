@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_DB: neoflexbd
       POSTGRES_USER: neoflexuser
-      POSTGRES_PASSWORD: neoflex
+      POSTGRES_PASSWORD: ${DB_PASSWORD:neoflex}
     ports:
       - "5432:5432"
     volumes:

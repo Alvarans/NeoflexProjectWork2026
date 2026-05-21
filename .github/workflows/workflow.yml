@@ -18,7 +18,7 @@ jobs:
         env:
           POSTGRES_DB: neoflexbd
           POSTGRES_USER: neoflexuser
-          POSTGRES_PASSWORD: neoflex
+          POSTGRES_PASSWORD: ${DB_PASSWORD:neoflex}
         ports:
           - 5432:5432
         options: >-
@@ -124,16 +124,18 @@ jobs:
           SPRING_PROFILES_ACTIVE: ci
 
       - name: SonarCloud Scan
-        run: >
-          mvn sonar:sonar
-          -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-          -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-          -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+        run: mvn sonar:sonar
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+            -Dsonar.host.url=https://sonarcloud.io
         if: success()
 
       - name: Coveralls
-        uses: coverallsapp/github-action@v2
+        uses: coverallsapp/github-action@0a51d2e0b5417d06e4ecceb534aec87defc53926
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
         if: success()
