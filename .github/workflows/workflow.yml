@@ -94,7 +94,7 @@ jobs:
               echo "Zookeeper is ready"
               break
             fi
-            echo "Waiting for Zookeeper... $i/30"
+            echo "Waiting for Zookeeper... $i/15"
             sleep 2
           done
 
@@ -105,7 +105,7 @@ jobs:
               echo "Kafka is ready"
               break
             fi
-            echo "Waiting for Kafka... $i/40"
+            echo "Waiting for Kafka... $i/20"
             sleep 3
           done
         env:

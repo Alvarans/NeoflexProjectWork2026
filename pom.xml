@@ -20,6 +20,7 @@
             **/generated/**,
             **/target/generated-sources/**,
             **/apiContract/**
+            **/utils/**
         </sonar.exclusions>
     </properties>
     <packaging>pom</packaging>
