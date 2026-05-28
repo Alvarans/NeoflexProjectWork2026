@@ -87,7 +87,7 @@ jobs:
 
       - name: Wait for Zookeeper
         run: |
-          for i in {1..30}; do
+          for i in {1..15}; do
             if echo stat | nc -w 2 localhost 2181 | grep -q "Mode:"; then
               echo "Zookeeper is ready"
               break
@@ -98,7 +98,7 @@ jobs:
 
       - name: Wait for Kafka
         run: |
-          for i in {1..40}; do
+          for i in {1..20}; do
             if kafka-topics --bootstrap-server localhost:9092 --list 2>/dev/null; then
               echo "Kafka is ready"
               break
