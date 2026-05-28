@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_DB: neoflexbd
       POSTGRES_USER: neoflexuser
-      POSTGRES_PASSWORD: ${DB_PASSWORD:neoflex}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-neoflex}
     ports:
       - "5432:5432"
     volumes:
@@ -19,6 +19,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - kafka-net
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.1
@@ -106,12 +108,16 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
+    networks:
+      - kafka-net
 
   deal:
     build:
       context: .
       dockerfile: deal/Dockerfile
     container_name: deal
+    networks:
+      - kafka-net
     ports:
       - "8011:8011"
     depends_on:
@@ -125,6 +131,8 @@ services:
       context: .
       dockerfile: statement/Dockerfile
     container_name: statement
+    networks:
+      - kafka-net
     ports:
       - "8012:8012"
     depends_on:
@@ -138,6 +146,8 @@ services:
       context: .
       dockerfile: dossier/Dockerfile
     container_name: dossier
+    networks:
+      - kafka-net
     ports:
       - "8013:8013"
     depends_on:
@@ -149,6 +159,8 @@ services:
       context: .
       dockerfile: apiGateway/Dockerfile
     container_name: api-gateway
+    networks:
+      - kafka-net
     ports:
       - "8015:8015"
     depends_on:
