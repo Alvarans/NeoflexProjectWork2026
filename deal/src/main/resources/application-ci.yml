@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/neoflexbd
+    username: ${DB_USERNAME:neoflexuser}
+    password: ${DB_PASSWORD:neoflex}
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+services:
+  calculator:
+    url: http://localhost:8010
+
+server:
+  port: 8011

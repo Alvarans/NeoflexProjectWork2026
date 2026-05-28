@@ -1,0 +1,336 @@
+openapi: 3.0.2
+info:
+  title: API gateway
+  version: 1.0.0
+  description: API для взаимодействия с кредитным конвейером.
+
+paths:
+  /deal/calculate/{statementId}:
+    post:
+      summary: Завершение регистрации и полный подсчёт кредита
+      operationId: calculateCredit
+      tags:
+        - Gateway
+      parameters:
+        - name: statementId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FinishRegistrationRequestDto'
+      responses:
+        '200':
+          description: Кредит успешно рассчитан и сохранен
+
+  /deal/document/{statementId}/send:
+    post:
+      summary: Запрос на отправку документов
+      operationId: sendDocuments
+      tags:
+        - Gateway
+        - Documents
+      parameters:
+        - name: statementId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Документы отправлены
+
+  /deal/document/{statementId}/sign:
+    post:
+      summary: Запрос на подписание документов
+      operationId: signDocuments
+      tags:
+        - Gateway
+        - Documents
+      parameters:
+        - name: statementId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Сформирован запрос на подписание
+
+  /deal/document/{statementId}/code:
+    post:
+      summary: Подписание документов (ввод кода)
+      operationId: documentCodePass
+      tags:
+        - Gateway
+        - Documents
+      parameters:
+        - name: statementId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentCodePassRequest' # Используем ссылку
+      responses:
+        200:
+          description: Документы успешно подписаны
+
+  /statement:
+    post:
+      summary: Прескоринг и расчет условий кредита
+      operationId: createStatement
+      tags:
+        - Gateway
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './common-components.yaml#/components/schemas/LoanStatementRequestDto'
+      responses:
+        '200':
+          description: Список из 4 предложений, отсортированных от худшего к лучшему
+          content:
+            application/json:
+              schema:
+                type: array
+                nullable: true
+                items:
+                  $ref: './common-components.yaml#/components/schemas/LoanOfferDto'
+
+  /statement/offer:
+    post:
+      summary: Выбор одного из предложений
+      operationId: selectOffer
+      tags:
+        - Gateway
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './common-components.yaml#/components/schemas/LoanOfferDto'
+      responses:
+        '200':
+          description: Предложение успешно выбрано
+
+  /deal/admin/statement/{statementId}:
+    get:
+      summary: Получить заявку по id
+      operationId: getStatementById
+      tags:
+        - Gateway
+        - Admin
+      parameters:
+        - name: statementId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Заявка найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatementDto'
+
+  /deal/admin/statement:
+    get:
+      summary: Получить все заявки
+      operationId: getAllStatements
+      tags:
+        - Gateway
+        - Admin
+      responses:
+        '200':
+          description: Список всех заявок
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StatementDto'
+components:
+  schemas:
+    FinishRegistrationRequestDto:
+      type: object
+      properties:
+        gender:
+          $ref: './common-components.yaml#/components/schemas/Genders'
+        maritalStatus:
+          $ref: './common-components.yaml#/components/schemas/MaritalStatus'
+        dependentAmount:
+          description: Число иждивенцев
+          type: integer
+          example: 3
+        passportIssueDate:
+          description: Дата выдачи паспорта
+          type: string
+          format: date
+          example: 2014-01-01
+        passportIssueBrach:
+          description: Место выдачи паспорта
+          type: string
+          example: MVD
+        employment:
+          $ref: './common-components.yaml#/components/schemas/EmploymentDto'
+        accountNumber:
+          description: Номер счёта
+          type: string
+          example: 15235434
+
+    StatementDto:
+      type: object
+      properties:
+        statementId:
+          type: string
+          format: uuid
+        client:
+          $ref: '#/components/schemas/ClientDto' # Ссылка на схему клиента
+        credit:
+          $ref: './common-components.yaml#/components/schemas/CreditDto' # Ссылка на схему кредита (см. ниже)
+        applicationStatus:
+          $ref: '#/components/schemas/ApplicationStatus'
+        creationDate:
+          type: string
+          format: date-time
+        appliedOffer:
+          $ref: './common-components.yaml#/components/schemas/LoanOfferDto'
+        signDate:
+          type: string
+          format: date-time
+        sesCode:
+          type: string
+        statusHistory:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatementStatusHistoryDto'
+
+    ClientDto:
+      type: object
+      properties:
+        firstName:
+          description: Имя клиента
+          type: string
+          minLength: 2
+          maxLength: 30
+          example: Boris
+        lastName:
+          description: Фамилия клиента
+          type: string
+          minLength: 2
+          maxLength: 30
+          example: Britva
+        middleName:
+          description: Отчество клиента
+          type: string
+          minLength: 2
+          maxLength: 30
+          example: Urievich
+        email:
+          description: Электронная почта клиента
+          type: string
+          pattern: "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$"
+          example: snitch@mail.ru
+        birthDate:
+          description: День рождения клиента. Должно быть не менее 18 лет назад
+          type: string
+          format: date
+          example: 2001-01-01
+        gender:
+          $ref: './common-components.yaml#/components/schemas/Genders'
+        maritalStatus:
+          $ref: './common-components.yaml#/components/schemas/MaritalStatus'
+        dependentAmount:
+          description: Число иждивенцев
+          type: integer
+          example: 3
+        passport:
+          $ref: '#/components/schemas/Passport'
+        employment:
+          $ref: './common-components.yaml#/components/schemas/EmploymentDto'
+        accountNumber:
+          description: Номер счёта
+          type: string
+          example: 15235434
+
+    Passport:
+      type: object
+      properties:
+        passportUuid:
+          type: string
+          format: uuid
+        series:
+          description: Серия паспорта клиента
+          type: string
+          pattern: '^\d{4}$'
+          example: 1234
+        number:
+          description: Номер паспорта клиента
+          type: string
+          pattern: '^\d{6}$'
+          example: 123456
+        issueBranch:
+          description: Место выдачи паспорта
+          type: string
+          example: MVD
+        issueDate:
+          description: Дата выдачи паспорта
+          type: string
+          format: date
+          example: 2014-01-01
+
+    ApplicationStatus:
+      description: Статус заявки
+      type: string
+      enum:
+        - PREAPPROVAL
+        - APPROVED
+        - CC_DENIED
+        - CC_APPROVED
+        - PREPARE_DOCUMENTS
+        - DOCUMENT_CREATED
+        - CLIENT_DENIED
+        - DOCUMENT_SIGNED
+        - CREDIT_ISSUED
+
+    DocumentCodePassRequest:
+      type: object
+      properties:
+        sescode:
+          type: string
+      required:
+        - sescode
+
+    StatementStatusHistoryDto:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApplicationStatus'
+        time:
+          type: string
+          format: date-time
+        changeType:
+          $ref: '#/components/schemas/ChangeType'
+
+    ChangeType:
+      description: Режим изменения истории статусов
+      type: string
+      enum:
+        - AUTOMATIC
+        - MANUAL

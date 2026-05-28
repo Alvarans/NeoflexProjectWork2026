@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: apigateway
+
+server:
+  port: 8015
+
+services:
+  calculator:
+    url: http://calculator:8010
+  deal:
+    url: http://deal:8011
+  statement:
+    url: http://statement:8012
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    ru.neoflex.gateway: DEBUG

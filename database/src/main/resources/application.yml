@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: Database
+  datasource:
+    url: jdbc:postgresql://postgres:5432/neoflexbd
+    username: ${DB_USERNAME:neoflexuser}
+    password: ${DB_PASSWORD:neoflex}
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+
+logging:
+  level:
+    liquibase: DEBUG
+    org.springframework.boot.autoconfigure.liquibase: DEBUG

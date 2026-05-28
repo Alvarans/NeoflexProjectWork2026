@@ -1,0 +1,99 @@
+package com.example.deal.handler;
+
+import jakarta.persistence.EntityNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.PessimisticLockingFailureException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.context.request.WebRequest;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+@RestControllerAdvice
+
+public class ControllerExceptionHandler {
+    Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
+    private static final String ERROR = "error";
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> illegalArgument(IllegalArgumentException iae, WebRequest request){
+        logger.error("Illegal argument exception handled: {}", iae.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(iae.getMessage());
+    }
+    /**
+     * Method, who handle ArgumentNotValidException exception
+     *
+     * @param ex - body of exception
+     * @return map of errors, contains naming of field, failed validation, and default message
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            logger.error("Validation error. In field {} with message: {}", fieldName, errorMessage);
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public Map<String, String> handleReadableException(HttpMessageNotReadableException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put(ERROR, "Malformed JSON request or missing required fields");
+        errors.put("details", ex.getMostSpecificCause().getMessage());
+        logger.error("JSON parsing error: {}", ex.getMessage());
+        return errors;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NullPointerException.class)
+    public Map<String, String> handleNullPointer(NullPointerException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put(ERROR, "Data not found or reference is null");
+        error.put("message", ex.getMessage());
+        logger.error("NPE Exception: ", ex);
+        return error;
+    }
+
+    @ExceptionHandler(HttpClientErrorException.class)
+    public ResponseEntity<Map<String, Object>> handleHttpClientException(HttpClientErrorException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put(ERROR, "Validation Error from External Service");
+        // Извлекаем само сообщение "Your age must be more than 18"
+        body.put("details", ex.getResponseBodyAsString());
+
+        return new ResponseEntity<>(body, ex.getStatusCode());
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleEntityNotFoundException(EntityNotFoundException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", ex.getMessage());
+        body.put("status", HttpStatus.NOT_FOUND.value());
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(PessimisticLockingFailureException.class)
+    public ResponseEntity<String> handleLockingFailure(PessimisticLockingFailureException ex) {
+        return ResponseEntity
+                .status(HttpStatus.LOCKED)
+                .body("Ресурс временно недоступен: попробуйте позже");
+    }
+}

@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: deal
+  datasource:
+    url: jdbc:postgresql://postgres:5432/neoflexbd
+    username: ${DB_USERNAME:neoflexuser}
+    password: ${DB_PASSWORD:neoflex}
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+  jpa:
+    hibernate:
+      ddl-auto: none
+  kafka:
+    bootstrap-servers: kafka:29092  # kafka
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+services:
+  calculator:
+    url: http://calculator:8010
+
+server:
+  port: 8011
+
