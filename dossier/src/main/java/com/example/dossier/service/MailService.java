@@ -1,6 +1,6 @@
 package com.example.dossier.service;
 
-import com.example.dossier.dto.EmailMessage;
+import com.example.api.common.dto.EmailMessage;
 
 public interface MailService {
     void sendFinishRegistration(EmailMessage msg);

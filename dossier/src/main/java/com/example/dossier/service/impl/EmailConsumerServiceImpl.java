@@ -1,6 +1,6 @@
 package com.example.dossier.service.impl;
 
-import com.example.dossier.dto.EmailMessage;
+import com.example.api.common.dto.EmailMessage;
 import com.example.dossier.service.EmailConsumerService;
 import com.example.dossier.service.MailService;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +45,7 @@ public class EmailConsumerServiceImpl implements EmailConsumerService {
             case "send-documents" -> emailService.sendDocuments(message);
             case "credit-issued" -> emailService.sendCreditIssued(message);
             case "statement-denied" -> emailService.sendDenied(message);
+            default -> emailService.sendDocuments(message);
         }
     }
 }

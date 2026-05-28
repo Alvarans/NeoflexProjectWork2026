@@ -4,7 +4,7 @@ spring:
 
 services:
   deal:
-    url: http://localhost:8011
+    url: http://deal:8011
 
 server:
   port: 8012

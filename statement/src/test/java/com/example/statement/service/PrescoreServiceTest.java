@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PrescoreServiceTest {
+class PrescoreServiceTest {
 
     private final PrescoreServiceImpl prescoreService = new PrescoreServiceImpl();
 

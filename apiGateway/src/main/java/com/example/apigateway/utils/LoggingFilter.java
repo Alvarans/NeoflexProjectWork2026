@@ -17,14 +17,14 @@ import java.io.UnsupportedEncodingException;
 @Component
 public class LoggingFilter extends OncePerRequestFilter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(com.example.deal.utils.LoggingFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingFilter.class);
 
 
     private String getStringValue(byte[] contentAsByteArray, String characterEncoding) {
         try {
             return new String(contentAsByteArray, 0, contentAsByteArray.length, characterEncoding);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            LOGGER.error("Unsupported encoding: {}", characterEncoding, e);
         }
         return "";
     }

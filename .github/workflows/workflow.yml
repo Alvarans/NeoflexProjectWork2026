@@ -1,0 +1,148 @@
+name: workflow.yml
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - feature/MVP-6
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: neoflexbd
+          POSTGRES_USER: ${{ secrets.DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U neoflexuser -d neoflexbd"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+      zookeeper:
+        image: confluentinc/cp-zookeeper:7.6.1
+        env:
+          ZOOKEEPER_CLIENT_PORT: 2181
+          ZOOKEEPER_TICK_TIME: 2000
+        ports:
+          - 2181:2181
+        options: >-
+          --health-cmd="echo stat | nc localhost 2181"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+      kafka:
+        image: confluentinc/cp-kafka:7.6.1
+        ports:
+          - 9092:9092
+        env:
+          KAFKA_BROKER_ID: 1
+          KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+          KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+          KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+          KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+          KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+          KAFKA_NUM_PARTITIONS: 1
+          # Увеличиваем таймауты для медленного старта
+          KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 5000
+          KAFKA_BROKER_RACK: default-rack
+        options: >-
+          --health-cmd="kafka-broker-api-versions --bootstrap-server localhost:9092"
+          --health-interval=30s
+          --health-timeout=20s
+          --health-retries=10
+          --health-start-period=60s
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Wait for PostgreSQL
+        run: |
+          for i in {1..30}; do
+            if pg_isready -h localhost -p 5432 -U neoflexuser -d neoflexbd; then
+              echo "PostgreSQL is ready"
+              break
+            fi
+            echo "Waiting for PostgreSQL... $i/30"
+            sleep 2
+          done
+
+      - name: Wait for Zookeeper
+        run: |
+          for i in {1..15}; do
+            if echo stat | nc -w 2 localhost 2181 | grep -q "Mode:"; then
+              echo "Zookeeper is ready"
+              break
+            fi
+            echo "Waiting for Zookeeper... $i/30"
+            sleep 2
+          done
+
+      - name: Wait for Kafka
+        run: |
+          for i in {1..20}; do
+            if kafka-topics --bootstrap-server localhost:9092 --list 2>/dev/null; then
+              echo "Kafka is ready"
+              break
+            fi
+            echo "Waiting for Kafka... $i/40"
+            sleep 3
+          done
+        env:
+          KAFKA_OPTS: -Djava.net.preferIPv4Stack=true
+
+      - name: Debug network
+        run: |
+          echo "=== Check running services ==="
+          docker ps
+          echo "=== Check ports ==="
+          netstat -tulpn 2>/dev/null | grep -E '5432|2181|9092' || true
+          echo "=== Test Kafka connection ==="
+          nc -zv localhost 9092 || true
+
+      - name: Build and Test
+        run: mvn clean verify -Dspring.profiles.active=ci
+        env:
+          SPRING_PROFILES_ACTIVE: ci
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+      - name: SonarCloud Scan
+        run: |
+          mvn sonar:sonar \
+            -Dsonar.token=$SONAR_TOKEN \
+            -Dsonar.projectKey=$PROJECT_KEY \
+            -Dsonar.organization=$ORGANISATION \
+            -Dsonar.host.url=https://sonarcloud.io
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+          ORGANISATION: ${{ secrets.SONAR_ORGANIZATION }}
+        if: success()
+
+
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@0a51d2e0b5417d06e4ecceb534aec87defc53926
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        if: success()

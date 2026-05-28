@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class StatementServiceTest {
+class StatementServiceTest {
     @Mock
     private PrescoreService prescoreService;
 

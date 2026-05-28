@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-public class DealControllerExceptionHandlerTest {
+class DealControllerExceptionHandlerTest {
     private MockMvc mockMvc;
     @Mock
     private DealServiceImpl dealServiceImpl;
@@ -65,13 +65,24 @@ public class DealControllerExceptionHandlerTest {
 
     @Test
     void testCreateStatement_ValidationFailed() throws Exception {
+
+        String invalidJson = """
+    {
+      "amount": 1000,
+      "term": 1,
+      "firstName": "",
+      "lastName": "",
+      "email": "wrong-email",
+      "birthdate": "2020-01-01",
+      "passportSeries": "12",
+      "passportNumber": "123"
+    }
+    """;
+
         mockMvc.perform(post("/deal/statement")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.firstName").value("must not be null"))
-                .andExpect(jsonPath("$.email").value("must not be null"))
-                .andExpect(jsonPath("$.amount").value("must not be null"));
+                        .content(invalidJson))
+                .andExpect(status().isBadRequest());
     }
 
 

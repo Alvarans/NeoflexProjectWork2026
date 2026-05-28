@@ -30,22 +30,17 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="gender" type="VARCHAR(50)">
-               <!-- <constraints nullable="false"/> -->
             </column>
             <column name="marital_status" type="VARCHAR(50)">
-               <!-- <constraints nullable="false"/> -->
             </column>
             <column name="dependent_amount" type="INTEGER">
-               <!-- <constraints nullable="false"/> -->
             </column>
             <column name="passport_id" type="jsonb">
                 <constraints nullable="false"/>
             </column>
             <column name="employment_id" type="jsonb">
-               <!-- <constraints nullable="false"/> -->
             </column>
             <column name="account_number" type="VARCHAR(255)">
-               <!-- <constraints nullable="false"/> -->
             </column>
         </createTable>
     </changeSet>

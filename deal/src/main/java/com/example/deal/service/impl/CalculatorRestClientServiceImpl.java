@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import tools.jackson.databind.ObjectMapper;
+
 
 import java.util.List;
 
@@ -21,11 +21,8 @@ import java.util.List;
 @Service
 public class CalculatorRestClientServiceImpl implements CalculatorRestClientService {
     private final RestClient restClient;
-    private final ObjectMapper objectMapper;
 
-    public CalculatorRestClientServiceImpl(RestClient.Builder restClientBuilder, ObjectMapper objectMapper
-            , @Value("${services.calculator.url}") String baseUrl) {
-        this.objectMapper = objectMapper;
+    public CalculatorRestClientServiceImpl(RestClient.Builder restClientBuilder, @Value("${services.calculator.url}") String baseUrl) {
         this.restClient = restClientBuilder
                 .baseUrl(baseUrl)
                 .build();
@@ -57,8 +54,6 @@ public class CalculatorRestClientServiceImpl implements CalculatorRestClientServ
                 .body(scoringDataDto)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
-                    // Извлекаем тело (пустой CreditDto согласно вашей спеке)
-                    CreditDto errorDto = objectMapper.readValue(response.getBody(), CreditDto.class);
                     throw new IllegalArgumentException("Check your data. Validation goes wrong");
                 })
                 .body(CreditDto.class);

@@ -4,39 +4,4 @@ info:
   version: 1.0.0
   description: API для ведения кредитного досье.
 paths: {}
-components:
-  schemas:
-    EmailMessage:
-      type: object
-      required:
-        - address
-        - theme
-        - statementId
-        - text
-      properties:
-        address:
-          type: string
-          description: Электронный адрес получателя
-          example: "user@example.com"
-        theme:
-          $ref: '#/components/schemas/EmailTheme'
-        statementId:
-          type: string
-          format: uuid
-          example: 123e4567-e89b-42d3-a456-556642440000
-        text:
-          type: string
-          description: Текст сообщения
-          example: "Ваша заявка одобрена."
 
-
-    EmailTheme:
-      type: string
-      description: Тема или тип уведомления
-      enum:
-        - finish-registration
-        - create-documents
-        - send-documents
-        - send-ses
-        - credit-issued
-        - statement-denied

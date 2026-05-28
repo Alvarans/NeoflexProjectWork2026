@@ -24,6 +24,7 @@ components:
           format: decimal
           minimum: 20000
           example: 30000.00
+          nullable: false
         term:
           description: Срок кредита
           type: integer
@@ -35,6 +36,7 @@ components:
           minLength: 2
           maxLength: 30
           example: Boris
+          nullable: false
         lastName:
           description: Фамилия клиента
           type: string
@@ -300,7 +302,43 @@ components:
           type: number
           format: decimal
           example: 150000.00
-        
+
+    EmailMessage:
+      type: object
+      required:
+        - address
+        - theme
+        - statementId
+        - text
+      properties:
+        address:
+          type: string
+          description: Электронный адрес получателя
+          example: "user@example.com"
+        theme:
+          $ref: '#/components/schemas/EmailTheme'
+        statementId:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-42d3-a456-556642440000
+        text:
+          type: string
+          description: Текст сообщения
+          example: "Ваша заявка одобрена."
+
+
+    EmailTheme:
+      type: string
+      description: Тема или тип уведомления
+      enum:
+        - finish-registration
+        - create-documents
+        - send-documents
+        - send-ses
+        - credit-issued
+        - statement-denied
+
+
     EmploymentStatus:
       description: Статус занятости клиента
       type: string

@@ -150,8 +150,9 @@ class ControllerExceptionHandlerTest {
                 response.getBody().get("details")
         );
     }
-
+    @SuppressWarnings({"java:S1144", "java:S1172"})
     private void dummyMethod(TestDto dto) {
+        //Method for testing exception
     }
 
     private static class TestDto {

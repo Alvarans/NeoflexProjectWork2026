@@ -34,42 +34,9 @@ public class ScoringServiceImpl implements ScoringService {
             throw new IllegalArgumentException("You need more total experience");
         if (scoringDataDto.getEmployment().getWorkExperienceCurrent() < 3)
             throw new IllegalArgumentException("You need more experience on your current work");
-        //Проверка статуса занятости клиента. Если клиент безработный - отказать в кредите. Иначе - увеличить добавочную ставку
-        if (scoringDataDto.getEmployment().getEmploymentStatus().equals(EmploymentStatus.UNEMPLOYED)) {
-            throw new IllegalArgumentException("You can't take a credit with status \"unemployed\"");
-        } else if (scoringDataDto.getEmployment().getEmploymentStatus().equals(EmploymentStatus.SELF_EMPLOYED)) {
-            rate = rate.add(new BigDecimal(1));
-            log.info("Rate added because of status +1. Current rate - " + rate);
-        } else if (scoringDataDto.getEmployment().getEmploymentStatus().equals(EmploymentStatus.BUSINESS_OWNER)) {
-            rate = rate.add(new BigDecimal(2));
-            log.info("Rate added because of status +2. Current rate - " + rate);
-        }
-        //Проверка должности клиента. В зависимости от неё уменьшается добавочная ставка по кредиту
-        if (scoringDataDto.getEmployment().getPosition().equals(Positions.OWNER)) {
-            rate = rate.subtract(new BigDecimal(1));
-            log.info("Rate subtracted because of position -1. Current rate - " + rate);
-        }
-        else if (scoringDataDto.getEmployment().getPosition().equals(Positions.MID_MANAGER)) {
-            rate = rate.subtract(new BigDecimal(2));
-            log.info("Rate subtracted because of position -2. Current rate - " + rate);
-        }
-        else if (scoringDataDto.getEmployment().getPosition().equals(Positions.TOP_MANAGER)) {
-            rate = rate.subtract(new BigDecimal(3));
-            log.info("Rate subtracted because of position -3. Current rate - " + rate);
-        }
-        //Проверка семейного статуса клиента. В зависимости от него ставка как увеличивается, так и уменьшается
-        if (scoringDataDto.getMaritalStatus().equals(MaritalStatus.MARRIED)) {
-            rate = rate.subtract(new BigDecimal(3));
-            log.info("Rate subtracted because of marinal status -3. Current rate - " + rate);
-        }
-        else if (scoringDataDto.getMaritalStatus().equals(MaritalStatus.WIDOW_WIDOWER)) {
-            rate = rate.subtract(new BigDecimal(1));
-            log.info("Rate subtracted because of marinal status -1. Current rate - " + rate);
-        }
-        else if (scoringDataDto.getMaritalStatus().equals(MaritalStatus.DIVORCED)) {
-            rate = rate.add(new BigDecimal(1));
-            log.info("Rate added because of marinal status +1. Current rate - " + rate);
-        }
+
+        rate = employmentStatusCheck(rate, scoringDataDto);
+        rate = maritalStatusCheck(rate, scoringDataDto);
         //Возраст клиента
         int age = Period.between(scoringDataDto.getBirthdate(), LocalDate.now()).getYears();
         //Если возраст клиента не соответствует политике банка, отказать в кредите
@@ -108,7 +75,7 @@ public class ScoringServiceImpl implements ScoringService {
                                            boolean isSalaryClient) {
         if (amount == null)
             amount = BigDecimal.ZERO;
-        return isInsuranceEnabled & (!isSalaryClient) ? amount.add(new BigDecimal("100000")) : amount;
+        return isInsuranceEnabled && (!isSalaryClient) ? amount.add(new BigDecimal("100000")) : amount;
     }
 
     /**
@@ -166,14 +133,49 @@ public class ScoringServiceImpl implements ScoringService {
     public BigDecimal calculatePSK(BigDecimal monthlyPayment, Integer term) {
         return monthlyPayment.multiply(new BigDecimal(term));
     }
-
-    /**
-     * Method for checking string on letters
-     *
-     * @param word - checking word
-     * @return true, if word contains only letters, or false, if not
-     */
-    private boolean isLatina(String word) {
-        return word.matches("^[A-Za-z]+$");
+    private BigDecimal employmentStatusCheck(BigDecimal currentRate, ScoringDataDto scoringDataDto) {
+        BigDecimal rate = currentRate;
+        //Проверка статуса занятости клиента. Если клиент безработный - отказать в кредите. Иначе - увеличить добавочную ставку
+        if (scoringDataDto.getEmployment().getEmploymentStatus().equals(EmploymentStatus.UNEMPLOYED)) {
+            throw new IllegalArgumentException("You can't take a credit with status \"unemployed\"");
+        } else if (scoringDataDto.getEmployment().getEmploymentStatus().equals(EmploymentStatus.SELF_EMPLOYED)) {
+            rate = rate.add(new BigDecimal(1));
+            log.info("Rate added because of status +1. Current rate - " + rate);
+        } else if (scoringDataDto.getEmployment().getEmploymentStatus().equals(EmploymentStatus.BUSINESS_OWNER)) {
+            rate = rate.add(new BigDecimal(2));
+            log.info("Rate added because of status +2. Current rate - " + rate);
+        }
+        //Проверка должности клиента. В зависимости от неё уменьшается добавочная ставка по кредиту
+        if (scoringDataDto.getEmployment().getPosition().equals(Positions.OWNER)) {
+            rate = rate.subtract(new BigDecimal(1));
+            log.info("Rate subtracted because of position -1. Current rate - " + rate);
+        }
+        else if (scoringDataDto.getEmployment().getPosition().equals(Positions.MID_MANAGER)) {
+            rate = rate.subtract(new BigDecimal(2));
+            log.info("Rate subtracted because of position -2. Current rate - " + rate);
+        }
+        else if (scoringDataDto.getEmployment().getPosition().equals(Positions.TOP_MANAGER)) {
+            rate = rate.subtract(new BigDecimal(3));
+            log.info("Rate subtracted because of position -3. Current rate - " + rate);
+        }
+        return rate;
+    }
+    private BigDecimal maritalStatusCheck(BigDecimal currentRate, ScoringDataDto scoringDataDto) {
+        BigDecimal rate = currentRate;
+        //Проверка семейного статуса клиента. В зависимости от него ставка как увеличивается, так и уменьшается
+        if (scoringDataDto.getMaritalStatus().equals(MaritalStatus.MARRIED)) {
+            rate = rate.subtract(new BigDecimal(3));
+            log.info("Rate subtracted because of marinal status -3. Current rate - " + rate);
+        }
+        else if (scoringDataDto.getMaritalStatus().equals(MaritalStatus.WIDOW_WIDOWER)) {
+            rate = rate.subtract(new BigDecimal(1));
+            log.info("Rate subtracted because of marinal status -1. Current rate - " + rate);
+        }
+        else if (scoringDataDto.getMaritalStatus().equals(MaritalStatus.DIVORCED)) {
+            rate = rate.add(new BigDecimal(1));
+            log.info("Rate added because of marinal status +1. Current rate - " + rate);
+        }
+        return rate;
     }
 }
+

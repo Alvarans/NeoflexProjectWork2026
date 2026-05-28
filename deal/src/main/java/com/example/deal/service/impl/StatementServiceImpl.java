@@ -7,8 +7,8 @@ import com.example.deal.repository.StatementRepository;
 import com.example.deal.service.ClientService;
 import com.example.deal.service.KafkaProducerService;
 import com.example.deal.service.StatementService;
-import com.example.dossier.dto.EmailMessage;
-import com.example.dossier.dto.EmailTheme;
+import com.example.api.common.dto.EmailMessage;
+import com.example.api.common.dto.EmailTheme;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +30,7 @@ public class StatementServiceImpl implements StatementService {
     private final ClientService clientService;
     private final KafkaProducerService kafkaProducerService;
 
+    private static final String ENTITY_NOT_FOUND_MESSAGE = "Can't find statement with such id";
     /**
      * Создание новой заявки
      *
@@ -67,7 +68,7 @@ public class StatementServiceImpl implements StatementService {
      * @return Искомая заявка
      */
     public StatementEntity getStatement(UUID statementId) {
-        return statementRepository.findByStatementId(statementId).orElseThrow(() -> new EntityNotFoundException("Can't find statement with such id"));
+        return statementRepository.findByStatementId(statementId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND_MESSAGE));
     }
 
     /**
@@ -92,7 +93,7 @@ public class StatementServiceImpl implements StatementService {
      */
     public StatementEntity getStatementForUpdate(UUID statementId) {
         return statementRepository.findByStatementIdForUpdate(statementId)
-                .orElseThrow(() -> new EntityNotFoundException("Can't find statement with such id"));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND_MESSAGE));
     }
 
     /**
@@ -103,7 +104,7 @@ public class StatementServiceImpl implements StatementService {
      */
     public String getClientEmailFromStatementByStatementId(UUID statementId) {
         return statementRepository.findClientEmailByStatementId(statementId)
-                .orElseThrow(() -> new EntityNotFoundException("Can't find statement with such id"));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND_MESSAGE));
     }
 
     /**
